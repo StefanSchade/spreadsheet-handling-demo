@@ -1,0 +1,4 @@
+[
+  { "branch_id": "B-001", "name": "Munich", "region": "South" },
+  { "branch_id": "B-002", "name": "Frankfurt", "region": "Central" }
+]

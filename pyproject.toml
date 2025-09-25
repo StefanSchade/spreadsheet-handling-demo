@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spreadsheet-handling-demo"
+version = "0.1.0"
+description = "Demo consumer repo for spreadsheet-handling (MARZIPAN NXT config flows)."
+authors = [{ name = "Your Team", email = "you@example.com" }]
+readme = "README.md"
+requires-python = ">=3.10"
+
+# Runtime deps: keep minimal; the library brings pandas, etc.
+dependencies = [
+    "spreadsheet-handling>=0.1.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+    "pyyaml>=6,<7",
+    # pandas is typically provided by spreadsheet-handling; add explicitly if you want tests to import it directly:
+    "pandas>=2.0,<3.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

@@ -1,58 +1,94 @@
 # =========================
-# Project variables
+# Virtualenv / Python
 # =========================
-SHELL        := /usr/bin/env bash
-ACTIVATE       := . $(VENV_DIR)/bin/activate
-SHELL        	:= /usr/bin/env bash
+SHELL := /usr/bin/env bash -eo pipefail
 
-ROOT         	:= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-TARGET  		:= $(ROOT)target
-VENV         	:= $(ROOT).venv
+VENV         ?= .venv
+PYTHON       := $(VENV)/bin/python
 
+# =========================
+# Paths & Naming
+# =========================
+ROOT         ?= $(CURDIR)/
+DATA_DIR     ?= ./data
+TMP_DIR      ?= ./tmp
+BUILD_DIR    ?= ./target
+SHA          ?= $(shell git rev-parse --short HEAD)
 
+# All top-level data sets (each dir under ./data becomes one workbook)
+PACK_SETS    := $(shell find $(DATA_DIR) -maxdepth 1 -mindepth 1 -type d -printf "%f\n")
 
-DATA_DIR   		?= ./data
-TMP_DIR    		?= ./tmp
+# =========================
+# Environment & dependencies
+# =========================
+.PHONEY: venv deps
+venv: ## Create .venv if missing
+	@test -d "$(VENV)" || python3 -m venv "$(VENV)"
 
-PACK_CMD   := $(PY) -m spreadsheet_handling.cli pack
-UNPACK_CMD := $(PY) -m spreadsheet_handling.cli unpack
+deps: venv ## Install project (pyproject.toml) into .venv (dev extras included)
+	$(PYTHON) -m pip install --upgrade pip
+	$(PYTHON) -m pip install -e '.[dev]'
 
-SHA=$(shell git rev-parse --short HEAD)
+# =========================
+# Pack/Unpack via CLI (thin commands)
+# =========================
+PACK_CMD     := $(PYTHON) -m spreadsheet_handling.cli pack
+UNPACK_CMD   := $(PYTHON) -m spreadsheet_handling.cli unpack
+RUN_CMD      := $(PYTHON) -m spreadsheet_handling.cli run
 
-
-PACK_CMD=$(PY) -m spreadsheet_handling.cli pack
-UNPACK_CMD=$(PY) -m spreadsheet_handling.cli unpack
-
-PACK_SETS=$(shell find $(DATA_DIR) -maxdepth 1 -mindepth 1 -type d -printf "%f\n")
-
-.PHONY: pack unpack roundtrip verify extract clean
-
-pack:
-	@mkdir -p $(TMP_DIR)
+# =========================
+# Targets
+# =========================
+.PHONY: pack
+pack: deps ## JSON -> XLSX for every dataset under ./data
+	@mkdir -p "$(TMP_DIR)"
 	@for d in $(PACK_SETS); do \
-		echo "Packing $$d -> $(TMP_DIR)/$$d-$(SHA).xlsx"; \
-		$(PACK_CMD) --input $(DATA_DIR)/$$d --output $(TMP_DIR)/$$d-$(SHA).xlsx; \
+		out="$(TMP_DIR)/$${d}-$(SHA).xlsx"; \
+		echo "Packing $(DATA_DIR)/$$d -> $$out"; \
+		$(PACK_CMD) --input "$(DATA_DIR)/$$d" --output "$$out"; \
 	done
+	@echo "OK: workbooks in $(TMP_DIR)"
 
+.PHONY: unpack
+unpack: deps ## XLSX -> JSON roundtrip back into ./data (delete missing)
+	@for x in $(TMP_DIR)/*.xlsx; do \
+		base=$$(basename "$$x" .xlsx); set=$${base%-$(SHA)}; \
+		echo "Unpacking $$x -> $(DATA_DIR)/$$set"; \
+		$(UNPACK_CMD) --input "$$x" --output "$(DATA_DIR)/$$set" --delete-missing; \
+	done
+	@echo "OK: JSON updated under $(DATA_DIR)"
 
-roundtrip: pack unpack  ## einfache Roundtrip-Demo (idempotenznah)
+.PHONY: roundtrip
+roundtrip: pack unpack ## Convenience: pack + unpack
 
-verify:
-	@$(PY) scripts/verify.py  # wirft Fehler bei Verstoß -> bricht CI
+.PHONY: verify
+verify: deps ## Run verification pipeline (Frames->Frames step, 'warn' or 'fail' via profile/pipeline config)
+	# Example uses 'verify' profile/pipeline; adjust if you rename in your repo
+	$(RUN_CMD) --profile verify --pipeline verify --input "$(DATA_DIR)" --output "$(TMP_DIR)/_verify-$(SHA).xlsx"
+	@echo "OK: verification"
 
-extract:
-	@mkdir -p $(TARGET)
-	@$(PY) scripts/extract.py --data $(DATA_DIR) --out $(TARGET)
+.PHONY: extract
+extract: deps ## Run extract pipeline (Frames->Frames), then persist via adapter into ./target
+	@mkdir -p "$(BUILD_DIR)"
+	# Example uses 'extract' profile/pipeline; adjust if you rename in your repo
+	$(RUN_CMD) --profile extract --pipeline extract --input "$(DATA_DIR)" --output "$(BUILD_DIR)"
+	@echo "OK: artifacts in $(BUILD_DIR)"
 
-clean:
-	rm -rf $(TMP_DIR) $(TARGET)
-
-snapshot:
-	@mkdir -p $(TARGET)
+.PHONY: snapshot
+snapshot: ## Optional: repo snapshot (script is not part of this demo repository)
+	@mkdir -p "$(BUILD_DIR)"
 	@if [ -x "$(ROOT)tools/repo_snapshot.sh" ]; then \
-	  "$(ROOT)tools/repo_snapshot.sh" "$(ROOT)" "$(TARGET)" "$(TARGET)/repo.txt"; \
+	  "$(ROOT)tools/repo_snapshot.sh" "$(ROOT)" "$(BUILD_DIR)" "$(BUILD_DIR)/repo.txt"; \
 	else \
 	  echo "⚠️  script not found: $(ROOT)tools/repo_snapshot.sh"; \
-	  echo "⚠️  not committed to this repo since non essential for the demo and would distract"; \
-	  echo "⚠️  manually copy if needed: https://github.com/StefanSchade/spreadsheet-handling/tree/main/tools "; \
+	  echo "⚠️  not committed to this repo since non-essential for the demo"; \
+	  echo "⚠️  manually copy if needed from: https://github.com/StefanSchade/spreadsheet-handling/tree/main/tools"; \
 	fi
+
+.PHONY: clean
+clean: ## Remove tmp and target
+	rm -rf "$(TMP_DIR)" "$(BUILD_DIR)"
+
+.PHONY: help
+help: ## Show help
+	@grep -E '^[a-zA-Z0-9_-]+:.*?##' $(MAKEFILE_LIST) | awk 'BEGIN{FS=":.*?## "};{printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

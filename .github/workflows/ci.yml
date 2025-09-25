@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Create venv & install (pyproject)
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install -e '.[dev]'
+
+      - name: Unit tests
+        run: |
+          .venv/bin/python -m pytest
+
+      - name: Pack & Verify
+        run: |
+          .venv/bin/python -m pip show spreadsheet-handling
+          make pack
+          make verify
+
+      - name: Extract
+        run: |
+          make extract
+
+      - name: Upload target artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nxt-config-${{ github.sha }}
+          path: target/
+          retention-days: 14
