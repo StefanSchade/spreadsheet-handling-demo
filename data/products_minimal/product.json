@@ -1,1 +1,7 @@
-{ "product_id": "P-001", "name": "Starter", "active": true }
+[
+  {
+    "product_id": "P-001",
+    "name": "Starter",
+    "active": true
+  }
+]

@@ -61,22 +61,25 @@ deps: setup
 # =========================
 # Targets (no implicit deps -> quick roundtrip)
 # =========================
+
 .PHONY: pack
 pack: ## JSON -> XLSX for every dataset under ./data (run `make setup` once before)
 	@mkdir -p "$(TMP_DIR)"
 	@for d in $(PACK_SETS); do \
 		out="$(TMP_DIR)/$${d}-$(SHA).xlsx"; \
 		echo "Packing $(DATA_DIR)/$$d -> $$out"; \
-		$(PACK_CMD) --input "$(DATA_DIR)/$$d" --output "$$out"; \
+		$(PACK_CMD) "$(DATA_DIR)/$$d" -o "$$out"; \
 	done
 	@echo "OK: workbooks in $(TMP_DIR)"
 
 .PHONY: unpack
 unpack: ## XLSX -> JSON roundtrip back into ./data (delete missing)
-	@for x in $(TMP_DIR)/*.xlsx; do \
+	@set -e; \
+	shopt -s nullglob; \
+	for x in $(TMP_DIR)/*.xlsx; do \
 		base=$$(basename "$$x" .xlsx); set=$${base%-$(SHA)}; \
 		echo "Unpacking $$x -> $(DATA_DIR)/$$set"; \
-		$(UNPACK_CMD) --input "$$x" --output "$(DATA_DIR)/$$set" --delete-missing; \
+		$(UNPACK_CMD) "$$x" -o "$(DATA_DIR)/$$set"; \
 	done
 	@echo "OK: JSON updated under $(DATA_DIR)"
 
