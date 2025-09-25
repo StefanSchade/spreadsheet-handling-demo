@@ -30,11 +30,11 @@ deps: venv ## Install project (pyproject.toml) into .venv (dev extras included)
 	$(PYTHON) -m pip install -e '.[dev]'
 
 # =========================
-# Pack/Unpack via CLI (thin commands)
+# CLI bindings (venv executables)
 # =========================
-PACK_CMD     := $(PYTHON) -m spreadsheet_handling.cli pack
-UNPACK_CMD   := $(PYTHON) -m spreadsheet_handling.cli unpack
-RUN_CMD      := $(PYTHON) -m spreadsheet_handling.cli run
+PACK_CMD     := $(VENV)/bin/sheets-pack
+UNPACK_CMD   := $(VENV)/bin/sheets-unpack
+RUN_CMD      := $(VENV)/bin/sheets-run
 
 # =========================
 # Targets
