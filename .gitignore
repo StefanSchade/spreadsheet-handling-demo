@@ -6,6 +6,9 @@
 target/
 build/
 
+# Makefile stamps
+.stamps/
+
 # Python
 __pycache__/
 *.pyc
