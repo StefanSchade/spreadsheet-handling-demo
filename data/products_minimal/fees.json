@@ -1,0 +1,4 @@
+[
+  { "product_id": "P-001", "fee_type": "origination", "amount": 1.0 },
+  { "product_id": "P-001", "fee_type": "service", "amount": 2.0 }
+]
