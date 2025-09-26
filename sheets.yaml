@@ -1,0 +1,33 @@
+# Minimal runner config compatible with your current sheets-run:
+# - declare required I/O via `io.profiles`
+# - keep pipelines with dotted/factory step references
+
+io:
+  profiles:
+    verify:
+      in:
+        kind: json_dir
+      out:
+        kind: xlsx
+    extract:
+      in:
+        kind: json_dir
+      out:
+        kind: json_dir
+
+pipelines:
+  verify:
+    steps:
+      # Your typed verify step (Frames -> Frames)
+      # Use one of the keys below depending on runner build; harmless to include both.
+      - dotted: "plugins.verify_steps:make_verify_step"
+        factory: "plugins.verify_steps:make_verify_step"
+        args:
+          mode: "fail"   # switch to "warn" for interactive work if desired
+
+  extract:
+    steps:
+      # Your demo transform (Frames -> Frames)
+      - dotted: "plugins.transforms:make_extract_products_step"
+        factory: "plugins.transforms:make_extract_products_step"
+        args: {}

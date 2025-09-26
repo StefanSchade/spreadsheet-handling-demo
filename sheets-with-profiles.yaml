@@ -1,0 +1,29 @@
+# sheets-run configuration: profiles + pipelines
+# Profiles select a pipeline and define default I/O kinds;
+# Pipelines declare the BoundSteps via dotted paths.
+
+profiles:
+  verify:
+    pipeline: verify
+    in:
+      kind: json_dir
+    out:
+      kind: xlsx
+  extract:
+    pipeline: extract
+    in:
+      kind: json_dir
+    out:
+      kind: json_dir
+
+pipelines:
+  verify:
+    steps:
+      - dotted: "plugins.verify_steps:make_verify_step"
+        args:
+          mode: "fail"   # switch to "warn" for interactive runs if you like
+
+  extract:
+    steps:
+      - dotted: "plugins.transforms:make_extract_products_step"
+        args: {}
