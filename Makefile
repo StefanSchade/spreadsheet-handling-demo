@@ -79,21 +79,27 @@ pack: ## JSON -> XLSX for every dataset under ./data (run `make setup` once befo
 	@echo "OK: workbooks in $(TMP_DIR)"
 
 .PHONY: unpack
-unpack: ## XLSX -> JSON roundtrip back into ./data (skip Excel lock files)
+unpack: ## XLSX -> JSON only for current $(SHA) (skip Excel lock files)
 	@set -e; \
 	shopt -s nullglob; \
-	for x in $(TMP_DIR)/*.xlsx; do \
+	found=0; \
+	for x in $(TMP_DIR)/*-$(SHA).xlsx; do \
 		base=$$(basename "$$x"); \
 		# Skip Excel lock/temp files like "~$foo.xlsx"
 		if [[ "$$base" == '~$'* ]]; then \
 			echo "Skipping Excel lock file: $$x"; \
 			continue; \
 		fi; \
+		found=1; \
 		name_noext=$${base%.xlsx}; \
 		set=$${name_noext%-$(SHA)}; \
 		echo "Unpacking $$x -> $(DATA_DIR)/$$set"; \
 		$(UNPACK_CMD) "$$x" -o "$(DATA_DIR)/$$set"; \
-	done
+	done; \
+	if [[ $$found -eq 0 ]]; then \
+		echo "No workbooks for current SHA ($(SHA)) in $(TMP_DIR). Run 'make pack' first."; \
+		exit 2; \
+	fi
 	@echo "OK: JSON updated under $(DATA_DIR)"
 
 .PHONY: roundtrip
