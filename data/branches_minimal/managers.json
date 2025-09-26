@@ -10,5 +10,9 @@
   {
     "branch_id": "B-003",
     "manager": "Andre"
+  },
+  {
+    "branch_id": "B-002",
+    "manager": "Peter"
   }
 ]

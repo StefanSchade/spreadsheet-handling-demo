@@ -1,4 +1,10 @@
 # =========================
+# User Config
+# =========================
+
+CONFIG := sheets.yaml
+
+# =========================
 # Virtualenv / Python
 # =========================
 SHELL        := /usr/bin/env bash -eo pipefail
@@ -73,31 +79,67 @@ pack: ## JSON -> XLSX for every dataset under ./data (run `make setup` once befo
 	@echo "OK: workbooks in $(TMP_DIR)"
 
 .PHONY: unpack
-unpack: ## XLSX -> JSON roundtrip back into ./data (delete missing)
+unpack: ## XLSX -> JSON only for current $(SHA) (skip Excel lock files)
 	@set -e; \
 	shopt -s nullglob; \
-	for x in $(TMP_DIR)/*.xlsx; do \
-		base=$$(basename "$$x" .xlsx); set=$${base%-$(SHA)}; \
+	found=0; \
+	for x in $(TMP_DIR)/*-$(SHA).xlsx; do \
+		base=$$(basename "$$x"); \
+		# Skip Excel lock/temp files like "~$foo.xlsx"
+		if [[ "$$base" == '~$'* ]]; then \
+			echo "Skipping Excel lock file: $$x"; \
+			continue; \
+		fi; \
+		found=1; \
+		name_noext=$${base%.xlsx}; \
+		set=$${name_noext%-$(SHA)}; \
 		echo "Unpacking $$x -> $(DATA_DIR)/$$set"; \
 		$(UNPACK_CMD) "$$x" -o "$(DATA_DIR)/$$set"; \
-	done
+	done; \
+	if [[ $$found -eq 0 ]]; then \
+		echo "No workbooks for current SHA ($(SHA)) in $(TMP_DIR). Run 'make pack' first."; \
+		exit 2; \
+	fi
 	@echo "OK: JSON updated under $(DATA_DIR)"
 
 .PHONY: roundtrip
 roundtrip: pack unpack ## Convenience: pack + unpack
 
 .PHONY: verify
-verify: ## Run verification pipeline (Frames->Frames), profile/pipeline are repo-defined
-	# Example uses 'verify' profile/pipeline; adjust if you rename in your repo
-	$(RUN_CMD) --profile verify --pipeline verify --input "$(DATA_DIR)" --output "$(TMP_DIR)/_verify-$(SHA).xlsx"
+verify: ## Run verification pipeline via sheets-run (json_dir -> xlsx)
+	$(RUN_CMD) \
+	  --config "$(CONFIG)" \
+	  --pipeline verify \
+	  --in-kind json_dir  --in-path "$(DATA_DIR)" \
+	  --out-kind xlsx     --out-path "$(TMP_DIR)/_verify-$(SHA).xlsx"
 	@echo "OK: verification"
 
 .PHONY: extract
-extract: ## Run extract pipeline (Frames->Frames), then persist via adapter into ./target
+extract: ## Run extract pipeline via sheets-run (json_dir -> json_dir)
 	@mkdir -p "$(BUILD_DIR)"
-	# Example uses 'extract' profile/pipeline; adjust if you rename in your repo
-	$(RUN_CMD) --profile extract --pipeline extract --input "$(DATA_DIR)" --output "$(BUILD_DIR)"
+	$(RUN_CMD) \
+	  --config "$(CONFIG)" \
+	  --pipeline extract \
+	  --in-kind json_dir  --in-path "$(DATA_DIR)" \
+	  --out-kind json_dir --out-path "$(BUILD_DIR)"
 	@echo "OK: artifacts in $(BUILD_DIR)"
+
+# =========================
+# Switch local and pip lib
+# =========================
+.PHONY: setup-lib-local
+setup-lib-local: ## Use local spreadsheet-handling from a sibling checkout (override with LIB_SRC=...)
+	@test -d "$(VENV)" || python3 -m venv "$(VENV)"
+	$(PYTHON) -m pip uninstall -y spreadsheet-handling || true
+	$(PYTHON) -m pip install -e '$(LIB_SRC)'
+	@echo "OK: using local spreadsheet-handling from $(LIB_SRC)"
+
+.PHONY: setup-lib-pypi
+setup-lib-pypi: ## Switch back to pinned PyPI version
+	@test -d "$(VENV)" || python3 -m venv "$(VENV)"
+	$(PYTHON) -m pip uninstall -y spreadsheet-handling || true
+	$(PYTHON) -m pip install 'spreadsheet-handling==0.1.0b2'
+	@echo "OK: using PyPI spreadsheet-handling 0.1.0b2"
 
 .PHONY: snapshot
 snapshot: ## Optional: repo snapshot (script is not part of this demo repository)
