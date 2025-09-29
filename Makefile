@@ -7,13 +7,14 @@ CONFIG := sheets.yaml
 # =========================
 # Virtualenv / Python
 # =========================
-SHELL        := /usr/bin/env bash -eo pipefail
+SHELL 		 := /usr/bin/env bash
+.SHELLFLAGS  := -eu -o pipefail -c
 
 VENV         ?= .venv
 PYTHON       := $(VENV)/bin/python
 
 # =========================
-# Paths & Naming
+# Paths and Naming
 # =========================
 ROOT         ?= $(CURDIR)/
 DATA_DIR     ?= ./data
@@ -52,7 +53,7 @@ $(STAMP_VENV):
 # Install project (pyproject.toml) into .venv (dev extras), stamped to suppress WSL timestamp churn
 $(STAMP_SETUP): pyproject.toml | $(STAMP_VENV) $(STAMP_DIR)
 	$(PYTHON) -m pip install --upgrade pip
-	$(PYTHON) -m pip install -e '.[dev]'
+	$(PYTHON) -m pip install -e ".[dev]"
 	@touch "$(STAMP_SETUP)"
 
 setup: $(STAMP_SETUP) ## Create venv (if missing) and install deps once (uses stamps)
@@ -80,27 +81,7 @@ pack: ## JSON -> XLSX for every dataset under ./data (run `make setup` once befo
 
 .PHONY: unpack
 unpack: ## XLSX -> JSON only for current $(SHA) (skip Excel lock files)
-	@set -e; \
-	shopt -s nullglob; \
-	found=0; \
-	for x in $(TMP_DIR)/*-$(SHA).xlsx; do \
-		base=$$(basename "$$x"); \
-		# Skip Excel lock/temp files like "~$foo.xlsx"
-		if [[ "$$base" == '~$'* ]]; then \
-			echo "Skipping Excel lock file: $$x"; \
-			continue; \
-		fi; \
-		found=1; \
-		name_noext=$${base%.xlsx}; \
-		set=$${name_noext%-$(SHA)}; \
-		echo "Unpacking $$x -> $(DATA_DIR)/$$set"; \
-		$(UNPACK_CMD) "$$x" -o "$(DATA_DIR)/$$set"; \
-	done; \
-	if [[ $$found -eq 0 ]]; then \
-		echo "No workbooks for current SHA ($(SHA)) in $(TMP_DIR). Run 'make pack' first."; \
-		exit 2; \
-	fi
-	@echo "OK: JSON updated under $(DATA_DIR)"
+	@UNPACK_CMD='$(UNPACK_CMD)' bash scripts/unpack_current_sha.sh "$(TMP_DIR)" "$(DATA_DIR)" "$(SHA)"
 
 .PHONY: roundtrip
 roundtrip: pack unpack ## Convenience: pack + unpack

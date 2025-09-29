@@ -13,5 +13,10 @@
     "branch_id": "B-003",
     "name": "Zurich",
     "region": "CH"
+  },
+  {
+    "branch_id": "B-004",
+    "name": "Panama City",
+    "region": "PAN"
   }
 ]
