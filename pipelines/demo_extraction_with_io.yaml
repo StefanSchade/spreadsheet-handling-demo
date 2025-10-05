@@ -1,0 +1,7 @@
+io:
+  input:  { kind: json_dir, path: ./data/branches_minimal }
+  output: { kind: xlsx,     path: ./tmp/branch_manager_summary.xlsx }
+
+pipeline:
+  - step: plugin
+    func: plugins.extractions.branch_manager_summary.extract_branch_manager_summary

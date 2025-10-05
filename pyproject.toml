@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 
 # Wichtig: Pin auf die tatsächlich verfügbare Version (Pre-Release)
 dependencies = [
-    "spreadsheet-handling==0.1.0b2",
+    "spreadsheet-handling==0.1.0b3",
 ]
 
 [project.optional-dependencies]

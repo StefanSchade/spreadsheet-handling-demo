@@ -69,6 +69,25 @@ deps: setup
 # Targets (no implicit deps -> quick roundtrip)
 # =========================
 
+.PHONY: run
+run: ## Execute a custom pipeline (usage: make run PIPELINE=./pipelines/demo_extraction.yaml)
+	@set -e; \
+	if [[ -n "$(PIPELINE)" ]]; then \
+		if [[ -f "$(PIPELINE)" ]]; then \
+			echo "Running pipeline (steps yaml): $(PIPELINE)"; \
+			$(RUN_CMD) \
+			  --pipeline-yaml "$(PIPELINE)" \
+			  --in-kind json_dir  --in-path "./data/branches_minimal" \
+			  --out-kind xlsx     --out-path "./tmp/branch_manager_summary.xlsx"; \
+		else \
+			echo "❌ Pipeline file not found: $(PIPELINE)"; exit 2; \
+		fi; \
+	else \
+		echo "❌ No PIPELINE provided. Usage: make run PIPELINE=./pipelines/demo_extraction.yaml"; \
+		exit 2; \
+	fi
+
+
 .PHONY: pack
 pack: ## JSON -> XLSX for every dataset under ./data (run `make setup` once before)
 	@mkdir -p "$(TMP_DIR)"

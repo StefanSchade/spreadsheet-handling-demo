@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # Use local spreadsheet-handling source (sibling checkout) for Make targets.
 # Usage examples:
-#   scripts/dev-local-lib.sh pack
-#   scripts/dev-local-lib.sh unpack
-#   scripts/dev-local-lib.sh which-lib
-#   scripts/dev-local-lib.sh make pack  # full control if you prefer
+#   scripts/dev-local.lib.sh pack
+#   scripts/dev-local.lib.sh unpack
+#   scripts/dev-local.lib.sh run PIPELINE=./pipelines/demo_extraction.yaml
+#   scripts/dev-local.lib.sh which-lib
+#   scripts/dev-local.lib.sh make pack  # pass through to make with full control
 
 set -euo pipefail
 
@@ -28,8 +29,9 @@ if [[ ! -x "$VENV/bin/python" ]]; then
   python3 -m venv "$VENV"
 fi
 
-# Build PYTHONPATH that points to local lib first
-export PYTHONPATH="$LIB_SRC/src:${PYTHONPATH:-}"
+# Build PYTHONPATH that points to demo plugins and the local lib first
+# (preserve existing PYTHONPATH if present)
+export PYTHONPATH="$ROOT/plugins:$LIB_SRC/src${PYTHONPATH:+:$PYTHONPATH}"
 
 # Point our CLI commands to the module entrypoints (bypass console scripts)
 export PACK_CMD="$VENV/bin/python -m spreadsheet_handling.cli.sheets_pack"
@@ -51,9 +53,9 @@ if [[ "${1:-}" == "make" ]]; then
   shift
   exec make "$@"
 elif [[ -n "${1:-}" ]]; then
-  exec make "$1"
+  # forward *all* args so VAR=... reach Make (e.g., PIPELINE=...)
+  exec make "$@"
 else
-  echo "Usage: scripts/dev-local-lib.sh <target|which-lib|make ...>"
+  echo "Usage: scripts/dev-local.lib.sh <target|which-lib|make ...>"
   exit 1
 fi
-

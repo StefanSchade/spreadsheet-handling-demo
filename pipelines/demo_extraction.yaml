@@ -1,0 +1,3 @@
+pipeline:
+  - step: plugin
+    func: plugins.extractions.branch_manager_summary.extract_branch_manager_summary
