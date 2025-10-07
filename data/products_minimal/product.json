@@ -2,6 +2,6 @@
   {
     "product_id": "P-001",
     "name": "Starter",
-    "active": true
+    "active": "True"
   }
 ]

@@ -3,6 +3,6 @@
     "rule_id": "R1",
     "target": "fees.amount",
     "op": ">",
-    "value": 0
+    "value": "0"
   }
 ]

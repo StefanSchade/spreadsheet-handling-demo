@@ -1,18 +1,18 @@
 [
   {
-    "branch_id": "B-001",
+    "id_(branch)": "B-001",
     "manager": "Alice"
   },
   {
-    "branch_id": "B-002",
+    "id_(branch)": "B-002",
     "manager": "Bob"
   },
   {
-    "branch_id": "B-003",
+    "id_(branch)": "B-003",
     "manager": "Andre"
   },
   {
-    "branch_id": "B-002",
+    "id_(branch)": "B-002",
     "manager": "Peter"
   }
 ]

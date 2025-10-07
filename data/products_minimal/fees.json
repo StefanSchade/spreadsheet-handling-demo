@@ -2,11 +2,11 @@
   {
     "product_id": "P-001",
     "fee_type": "origination",
-    "amount": 1
+    "amount": "1"
   },
   {
     "product_id": "P-001",
     "fee_type": "service",
-    "amount": 2
+    "amount": "2"
   }
 ]

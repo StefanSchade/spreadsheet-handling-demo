@@ -1,21 +1,21 @@
 [
   {
-    "branch_id": "B-001",
-    "name": "Munich",
+    "id": "B-001",
+    "name": "Hallo",
     "region": "South"
   },
   {
-    "branch_id": "B-002",
+    "id": "B-002",
     "name": "Frankfurt",
     "region": "Central"
   },
   {
-    "branch_id": "B-003",
+    "id": "B-003",
     "name": "Zurich",
     "region": "CH"
   },
   {
-    "branch_id": "B-004",
+    "id": "B-004",
     "name": "Panama City",
     "region": "PAN"
   }

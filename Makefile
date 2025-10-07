@@ -72,20 +72,19 @@ deps: setup
 .PHONY: run
 run: ## Execute a custom pipeline (usage: make run PIPELINE=./pipelines/demo_extraction.yaml)
 	@set -e; \
-	if [[ -n "$(PIPELINE)" ]]; then \
-		if [[ -f "$(PIPELINE)" ]]; then \
-			echo "Running pipeline (steps yaml): $(PIPELINE)"; \
-			$(RUN_CMD) \
-			  --pipeline-yaml "$(PIPELINE)" \
-			  --in-kind json_dir  --in-path "./data/branches_minimal" \
-			  --out-kind xlsx     --out-path "./tmp/branch_manager_summary.xlsx"; \
-		else \
-			echo "❌ Pipeline file not found: $(PIPELINE)"; exit 2; \
-		fi; \
-	else \
-		echo "❌ No PIPELINE provided. Usage: make run PIPELINE=./pipelines/demo_extraction.yaml"; \
-		exit 2; \
-	fi
+	if [[ -z "$(PIPELINE)" ]]; then \
+		echo "❌ No PIPELINE provided. Usage: make run PIPELINE=./pipelines/demo_*.yaml"; exit 2; \
+	fi; \
+	if [[ ! -f "$(PIPELINE)" ]]; then \
+		echo "❌ Pipeline file not found: $(PIPELINE)"; exit 2; \
+	fi; \
+	echo "Running pipeline (steps yaml): $(PIPELINE)"; \
+	$(RUN_CMD) \
+	  --pipeline-yaml "$(PIPELINE)" \
+	  $(if $(IN_KIND),--in-kind '$(IN_KIND)') \
+	  $(if $(IN_PATH),--in-path '$(IN_PATH)') \
+	  $(if $(OUT_KIND),--out-kind '$(OUT_KIND)') \
+	  $(if $(OUT_PATH),--out-path '$(OUT_PATH)')
 
 
 .PHONY: pack
@@ -124,6 +123,11 @@ extract: ## Run extract pipeline via sheets-run (json_dir -> json_dir)
 	  --out-kind json_dir --out-path "$(BUILD_DIR)"
 	@echo "OK: artifacts in $(BUILD_DIR)"
 
+.PHONY: lint-json
+lint-json:
+	@command -v jq >/dev/null || { echo "Install jq"; exit 2; }
+	@find data -name '*.json' -print -exec sh -c 'jq . "{}" >/dev/null || echo "Invalid: {}"' \;
+
 # =========================
 # Switch local and pip lib
 # =========================
@@ -145,7 +149,7 @@ setup-lib-pypi: ## Switch back to pinned PyPI version
 snapshot: ## Optional: repo snapshot (script is not part of this demo repository)
 	@mkdir -p "$(BUILD_DIR)"
 	@if [ -x "$(ROOT)tools/repo_snapshot.sh" ]; then \
-	  "$(ROOT)tools/repo_snapshot.sh" "$(ROOT)" "$(BUILD_DIR)" "$(BUILD_DIR)/repo.txt"; \
+	  "$(ROOT)tools/repo_snapshot.sh" "$(ROOT)" "$(BUILD_DIR)" "$(BUILD_DIR)/spreadsheet-handling-demo.txt"; \
 	else \
 	  echo "⚠️  script not found: $(ROOT)tools/repo_snapshot.sh"; \
 	  echo "⚠️  not committed to this repo since non-essential for the demo"; \
