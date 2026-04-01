@@ -10,7 +10,7 @@ authors = [{ name = "Your Team", email = "you@example.com" }]
 readme = "README.md"
 requires-python = ">=3.10"
 
-# Wichtig: Pin auf die tatsächlich verfügbare Version (Pre-Release)
+# Important: keep this in sync with `LIB_PYPI_VERSION` in the Makefile.
 dependencies = [
     "spreadsheet-handling==0.1.0b4",
 ]
@@ -19,7 +19,7 @@ dependencies = [
 dev = [
     "pytest>=8,<9",
     "pyyaml>=6,<7",
-    # pandas ist meist transitiv durch spreadsheet-handling abgedeckt; ggf. explizit pinnen:
+    # pandas is usually covered transitively by spreadsheet-handling; pin explicitly if needed.
     "pandas>=2.0,<3.0",
 ]
 

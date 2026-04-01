@@ -3,6 +3,8 @@
 # =========================
 
 CONFIG := sheets.yaml
+LIB_SRC ?= ../spreadsheet-handling
+LIB_PYPI_VERSION ?= 0.1.0b4
 
 # =========================
 # Virtualenv / Python
@@ -142,8 +144,8 @@ setup-lib-local: ## Use local spreadsheet-handling from a sibling checkout (over
 setup-lib-pypi: ## Switch back to pinned PyPI version
 	@test -d "$(VENV)" || python3 -m venv "$(VENV)"
 	$(PYTHON) -m pip uninstall -y spreadsheet-handling || true
-	$(PYTHON) -m pip install 'spreadsheet-handling==0.1.0b2'
-	@echo "OK: using PyPI spreadsheet-handling 0.1.0b2"
+	$(PYTHON) -m pip install 'spreadsheet-handling==$(LIB_PYPI_VERSION)'
+	@echo "OK: using PyPI spreadsheet-handling $(LIB_PYPI_VERSION)"
 
 .PHONY: snapshot
 snapshot: ## Optional: repo snapshot (script is not part of this demo repository)
