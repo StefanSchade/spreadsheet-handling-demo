@@ -40,6 +40,119 @@ Pipeline:
 
 * `pipelines/demo_product_business_slice.yaml`
 
+Command:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_business_slice.yaml
+----
+
+== Source Data
+
+The central business table is `product.json`:
+
+[source,json]
+----
+[
+  {
+    "id": "P-100",
+    "name": "Starter Kit",
+    "id_(product_manager)": "PM-10",
+    "status": "active",
+    "category": "entry"
+  }
+]
+----
+
+The important part is `id_(product_manager)`. That is the FK-style column that allows
+the pipeline to derive a helper column from the `product_manager` table.
+
+The second relation lives in `product_manager.json`:
+
+[source,json]
+----
+[
+  {
+    "id": "PM-10",
+    "name": "Marta Vogel",
+    "id_(branch)": "B-001",
+    "email": "marta.vogel@example.test"
+  }
+]
+----
+
+That gives us a transitive business story:
+
+* a product belongs to a product manager
+* a product manager belongs to a branch
+
+== Overrides
+
+The slice also includes sheet-specific rendering overrides:
+
+[source,yaml]
+----
+defaults:
+  auto_filter: true
+  freeze_header: true
+
+sheets:
+  product:
+    header_fill_rgb: "#D9EAD3"
+  product_manager:
+    header_fill_rgb: "#CFE2F3"
+  branch:
+    auto_filter: false
+    freeze_header: false
+    header_fill_rgb: "#FCE5CD"
+----
+
+This gives us one workbook with visible differences between sheets instead of a uniform
+"same everywhere" export.
+
+== Pipeline
+
+The pipeline combines five ideas in one small flow:
+
+* `apply_overrides` injects workbook and sheet rendering options
+* `validate` checks duplicate IDs and missing FK targets
+* `add_validations` adds Excel list validations
+* `apply_fks` materializes helper columns
+* `flatten_headers` keeps unpacked JSON readable on the way back
+
+The relevant shape is:
+
+[source,yaml]
+----
+pipeline:
+  - step: apply_overrides
+    overrides_path: ./data/product_business_slice/overrides.yaml
+
+  - step: validate
+    mode_duplicate_ids: warn
+    mode_missing_fk: warn
+    defaults:
+      id_field: id
+      label_field: name
+      detect_fk: true
+      helper_prefix: "_"
+
+  - step: add_validations
+    rules:
+      - sheet: product
+        column: status
+        rule:
+          type: in_list
+          values: [active, pilot, retired]
+
+  - step: apply_fks
+    defaults:
+      id_field: id
+      label_field: name
+      detect_fk: true
+      helper_prefix: "_"
+----
+
 == What To Look For In Excel
 
 On `product`:
@@ -55,6 +168,33 @@ On `branch`:
 * filter disabled
 * freeze disabled
 * distinct header styling via sheet override
+
+== What Comes Back On Unpack
+
+After the workbook is unpacked again, the helper columns stay understandable because
+the pipeline flattens headers before export.
+
+Examples:
+
+* `product` gets `_product_manager_name`
+* `product_manager` gets `_branch_name`
+
+This keeps the roundtrip suitable for explanation and testing, instead of returning
+tuple-shaped serialized header names.
+
+== Why This Is A Good First Slice
+
+This slice is intentionally not maximal. It works as the first benchmark because it
+already combines:
+
+* business-readable source data
+* visible spreadsheet UX
+* validation behavior
+* FK-driven enrichment
+* clean roundtrip behavior
+
+That makes it a strong base for later additions such as summary sheets, named ranges,
+or multi-header examples.
 
 == Current Notes
 
