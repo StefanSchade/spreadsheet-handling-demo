@@ -28,6 +28,11 @@ The pipeline uses strict validation modes:
 * `mode_duplicate_ids: fail`
 * `mode_missing_fk: fail`
 
+Current status quo:
+
+* the canonical strict value is `fail`
+* `error` is a tempting synonym, but is not currently accepted by the pipeline config
+
 == What Is Intentionally Broken
 
 The `product` table contains two deliberate problems:
