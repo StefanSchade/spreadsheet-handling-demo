@@ -182,6 +182,6 @@ This is only a first-pass consumer view from the demo repository.
 | Present in core capabilities, but secondary from the current demo-user perspective.
 
 | Named ranges
-| missing from curated demo
-| Present in core tests, but not yet turned into a visible demo story.
+| already demoed
+| The product workbook can now be used as an explicit named-range demo and verification target.
 |===

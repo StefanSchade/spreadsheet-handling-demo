@@ -26,5 +26,8 @@ demo repository.
 * Validation walkthrough:
   xref:walkthroughs/product_validation_slice.adoc[Product Validation Slice]
 
+* Named-range walkthrough:
+  xref:walkthroughs/named_ranges_product_slice.adoc[Named Ranges On The Product Slice]
+
 * Command reference:
   xref:reference/commands.adoc[Commands]

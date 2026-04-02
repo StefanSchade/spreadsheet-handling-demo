@@ -41,6 +41,13 @@ Run the intentionally failing validation slice:
 make run PIPELINE=./pipelines/demo_product_validation_failures.yaml
 ----
 
+Verify named ranges on the existing product workbook:
+
+[source,bash]
+----
+.venv/bin/pytest tests/test_named_ranges_demo.py -q
+----
+
 == Generic Demo Flows
 
 Run a custom pipeline:

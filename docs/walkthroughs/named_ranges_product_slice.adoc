@@ -1,0 +1,53 @@
+= Named Ranges On The Product Slice
+
+This walkthrough does not introduce a new dataset. Instead, it reuses the existing
+product business slice and looks at one specific workbook-level capability:
+auto-generated named ranges.
+
+== Why This Matters
+
+Named ranges make workbook structure easier to reference from:
+
+* formulas
+* validations
+* later automation or add-in style integrations
+
+In the current core behavior, each visible table gets deterministic names for:
+
+* the full table
+* the header area
+* the body area
+
+== Source
+
+Use the existing product slice:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_business_slice.yaml
+----
+
+This produces:
+
+* `tmp/product_business_slice.xlsx`
+
+== Expected Named Ranges
+
+For the current product workbook, the generated names include entries such as:
+
+* `product_product_table`
+* `product_product_header`
+* `product_product_body`
+* `product_manager_product_manager_table`
+* `branch_branch_table`
+
+== What To Look For
+
+The key points are:
+
+* names are deterministic
+* names are sheet-specific
+* each table gets table/header/body variants
+
+This makes named ranges a good "structural metadata" capability to demonstrate without
+adding another business dataset.
