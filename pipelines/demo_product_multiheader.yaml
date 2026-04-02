@@ -1,0 +1,13 @@
+io:
+  input:  { kind: json_dir, path: ./data/product_multiheader_view }
+  output: { kind: xlsx,     path: ./tmp/product_multiheader.xlsx }
+
+excel:
+  auto_filter: true
+  freeze_header: false
+  header_fill_rgb: D9EAD3
+
+pipeline:
+  - step: unflatten_headers
+    sheet: product_overview
+    sep: "."

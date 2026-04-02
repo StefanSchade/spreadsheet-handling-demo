@@ -48,6 +48,20 @@ Verify named ranges on the existing product workbook:
 .venv/bin/pytest tests/test_named_ranges_demo.py -q
 ----
 
+Run the multi-header product slice:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_multiheader.yaml
+----
+
+Verify the grouped headers:
+
+[source,bash]
+----
+.venv/bin/pytest tests/test_multiheader_demo.py -q
+----
+
 == Generic Demo Flows
 
 Run a custom pipeline:

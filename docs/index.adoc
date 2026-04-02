@@ -29,5 +29,8 @@ demo repository.
 * Named-range walkthrough:
   xref:walkthroughs/named_ranges_product_slice.adoc[Named Ranges On The Product Slice]
 
+* Multi-header walkthrough:
+  xref:walkthroughs/product_multiheader_slice.adoc[Product Multi-Header Slice]
+
 * Command reference:
   xref:reference/commands.adoc[Commands]

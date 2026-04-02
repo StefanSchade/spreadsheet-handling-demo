@@ -1,0 +1,52 @@
+= Product Multi-Header Slice
+
+This slice demonstrates multi-row spreadsheet headers without introducing a new
+business theme. It reuses the product overview idea, but starts from flat JSON keys.
+
+== Purpose
+
+The point of this slice is to show that:
+
+* JSON can stay flat and source-friendly
+* the pipeline can rebuild grouped spreadsheet headers
+* Excel output can present `product`, `manager`, and `branch` as visible header bands
+
+== Source Shape
+
+The JSON uses dotted keys such as:
+
+* `product.id`
+* `product.name`
+* `manager.name`
+* `branch.name`
+* `branch.region`
+
+== Pipeline
+
+The multi-header effect comes from:
+
+[source,yaml]
+----
+pipeline:
+  - step: unflatten_headers
+    sheet: product_overview
+    sep: "."
+----
+
+== Run
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_multiheader.yaml
+----
+
+== What To Look For In Excel
+
+On `product_overview`:
+
+* two header rows instead of one
+* grouped bands such as `product` and `branch`
+* merged top-level header cells where several columns share the same first level
+
+This slice is useful because it shows a presentational capability that does not require
+changing the business meaning of the source data.

@@ -1,0 +1,23 @@
+[
+  {
+    "product.id": "P-100",
+    "product.name": "Starter Kit",
+    "manager.name": "Marta Vogel",
+    "branch.name": "Berlin Hub",
+    "branch.region": "Central Europe"
+  },
+  {
+    "product.id": "P-200",
+    "product.name": "Growth Kit",
+    "manager.name": "Marta Vogel",
+    "branch.name": "Berlin Hub",
+    "branch.region": "Central Europe"
+  },
+  {
+    "product.id": "P-300",
+    "product.name": "Enterprise Suite",
+    "manager.name": "Leon Bauer",
+    "branch.name": "Zurich Hub",
+    "branch.region": "DACH"
+  }
+]

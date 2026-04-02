@@ -174,8 +174,8 @@ This is only a first-pass consumer view from the demo repository.
 | Existing demo and test coverage show these, and the new product pipeline enables them explicitly.
 
 | Multi-row headers
-| missing from curated demo
-| Strongly present in core tests, but not yet included in the first business-facing dataset.
+| already demoed
+| The product multi-header slice now shows grouped Excel headers rebuilt from flat dotted JSON keys.
 
 | XML / CSV edge flows
 | partially demoed
