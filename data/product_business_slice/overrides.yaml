@@ -1,0 +1,13 @@
+defaults:
+  auto_filter: true
+  freeze_header: true
+
+sheets:
+  product:
+    header_fill_rgb: "#D9EAD3"
+  product_manager:
+    header_fill_rgb: "#CFE2F3"
+  branch:
+    auto_filter: false
+    freeze_header: false
+    header_fill_rgb: "#FCE5CD"

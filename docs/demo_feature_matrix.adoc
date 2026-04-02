@@ -162,12 +162,12 @@ This is only a first-pass consumer view from the demo repository.
 | Existing demo extraction pipelines already use dotted plugin references.
 
 | Sheet-specific overrides
-| partially demoed
-| Supported in core, but not yet highlighted in a clean walkthrough-oriented demo dataset.
+| already demoed
+| The curated product slice now uses an overrides file with visible per-sheet differences for filter, freeze, and header styling.
 
 | Dropdown / list validation
-| partially demoed
-| Covered in core tests, not yet surfaced in the new curated product slice.
+| already demoed
+| The curated product slice now adds list validations for product status, category, and branch country.
 
 | Header styling / freeze / auto-filter
 | already demoed
@@ -230,6 +230,8 @@ extra plumbing.
 
 . FK-derived helper columns next to reference fields
 . workbook-level UX such as auto-filter, freeze header, and header styling
+. sheet-specific overrides for visible per-sheet differences
+. dropdown-style list validations for selected business fields
 . referential validation
 . clean JSON -> XLSX -> JSON storytelling
 
@@ -246,6 +248,12 @@ The first product slice now runs through both directions:
 For this slice we currently flatten headers before writing so that helper columns come
 back as readable JSON keys such as `_product_manager_name` instead of tuple-like
 serialized header values.
+
+It also demonstrates two more spreadsheet-facing features:
+
+* list validations for `product.status`, `product.category`, and `branch.country`
+* per-sheet overrides from `overrides.yaml`, with visible differences in filter,
+  freeze, and header styling between sheets
 
 == Follow-up Build Order
 

@@ -8,6 +8,9 @@ excel:
   header_fill_rgb: DDDDDD
 
 pipeline:
+  - step: apply_overrides
+    overrides_path: ./data/product_business_slice/overrides.yaml
+
   - step: validate
     mode_duplicate_ids: warn
     mode_missing_fk: warn
@@ -16,6 +19,24 @@ pipeline:
       label_field: name
       detect_fk: true
       helper_prefix: "_"
+
+  - step: add_validations
+    rules:
+      - sheet: product
+        column: status
+        rule:
+          type: in_list
+          values: [active, pilot, retired]
+      - sheet: product
+        column: category
+        rule:
+          type: in_list
+          values: [entry, standard, premium]
+      - sheet: branch
+        column: country
+        rule:
+          type: in_list
+          values: [DE, CH, AT]
 
   - step: apply_fks
     defaults:
