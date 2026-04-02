@@ -1,28 +1,33 @@
 from __future__ import annotations
 
-from typing import Dict
-
 import pandas as pd
 import pytest
 
-from plugins.verify_steps import make_verify_step
+from plugins.extractions.branch_manager_summary import extract_branch_manager_summary
 
 
-Frames = Dict[str, pd.DataFrame]
-
-
-def test_verify_warn_mode_all_good() -> None:
-    frames: Frames = {
-        "products": pd.DataFrame({"id": [1, 2], "name": ["A", "B"]}),
-        "fees": pd.DataFrame({"product_id": [1, 2], "amount": [1.0, 2.0]}),
+def test_branch_manager_summary_accepts_branch_alias() -> None:
+    frames = {
+        "branches": pd.DataFrame(
+            {
+                "branch_id": ["B-001"],
+                "name": ["South"],
+                "region": ["S"],
+            }
+        ),
+        "manager": pd.DataFrame(
+            {
+                "branch_id": ["B-001"],
+                "manager_name": ["Alice"],
+            }
+        ),
     }
-    step = make_verify_step(mode="warn")
-    out = step(frames)
-    assert out is frames  # same object or equal content is fine
+
+    out = extract_branch_manager_summary(frames)
+
+    assert list(out["BranchSummary"]["manager"]) == ["Alice"]
 
 
-def test_verify_fail_on_empty_columns() -> None:
-    frames: Frames = {"empty": pd.DataFrame()}
-    step = make_verify_step(mode="fail")
-    with pytest.raises(ValueError):
-        step(frames)
+def test_branch_manager_summary_requires_branches_table() -> None:
+    with pytest.raises(KeyError, match="branches table"):
+        extract_branch_manager_summary({})

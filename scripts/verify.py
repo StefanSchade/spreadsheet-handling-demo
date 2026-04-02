@@ -1,10 +1,21 @@
-from spreadsheet_handling.api import load_dataset  # beispielhaft
-from plugins.transforms import run_repo_validations
+from __future__ import annotations
 
-def main():
-    ds = load_dataset("./data")  # oder über Excel-Layer, wenn erwünscht
-    run_repo_validations(ds)     # wirft ValueError bei Regelverstoß
+from pathlib import Path
+
+from spreadsheet_handling.io_backends.json_backend import JSONBackend
+
+from plugins.extractions.branch_manager_summary import extract_branch_manager_summary
+
+
+def main() -> None:
+    data_dir = Path("./data/branches_minimal")
+    frames = JSONBackend().read_multi(str(data_dir), header_levels=1)
+    out = extract_branch_manager_summary(frames)
+    summary = out["BranchSummary"]
+
+    assert list(summary.columns) == ["id", "name", "region", "manager"]
     print("Verification OK.")
+
 
 if __name__ == "__main__":
     main()

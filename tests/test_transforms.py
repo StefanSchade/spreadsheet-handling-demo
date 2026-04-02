@@ -4,28 +4,54 @@ from typing import Dict
 
 import pandas as pd
 
-from plugins.transforms import make_extract_products_step
+from plugins.extractions.branch_manager_summary import extract_branch_manager_summary
 
 Frames = Dict[str, pd.DataFrame]
 
 
-def test_extract_products_basic_merge() -> None:
+def test_extract_branch_manager_summary_basic_join() -> None:
     frames: Frames = {
-        "products": pd.DataFrame({"id": [1, 2], "name": ["A", "B"]}),
-        "fees": pd.DataFrame({"product_id": [1, 2], "amount": [1.0, 2.0]}),
+        "branch": pd.DataFrame(
+            {
+                "id": ["B-001", "B-002"],
+                "name": ["South", "Central"],
+                "region": ["S", "C"],
+            }
+        ),
+        "managers": pd.DataFrame(
+            {
+                "id_(branch)": ["B-001", "B-002"],
+                "manager": ["Alice", "Bob"],
+            }
+        ),
     }
-    step = make_extract_products_step()
-    out = step(frames)
-    assert "products_extracted" in out
-    merged = out["products_extracted"]
-    assert list(merged.columns)[:3] == ["id", "name", "product_id"]  # merge structure predictable
-    assert merged.shape[0] == 2
-    assert float(merged["amount"].sum()) == 3.0
+
+    out = extract_branch_manager_summary(frames)
+
+    assert list(out) == ["BranchSummary"]
+    summary = out["BranchSummary"]
+    assert list(summary.columns) == ["id", "name", "region", "manager"]
+    assert list(summary["manager"]) == ["Alice", "Bob"]
 
 
-def test_extract_products_missing_inputs_pass_through() -> None:
-    frames: Frames = {"products": pd.DataFrame({"id": [1]})}
-    step = make_extract_products_step()
-    out = step(frames)
-    assert out is not None
-    assert "products_extracted" not in out
+def test_extract_branch_manager_summary_keeps_first_manager_per_branch() -> None:
+    frames: Frames = {
+        "branch": pd.DataFrame(
+            {
+                "id": ["B-002"],
+                "name": ["Central"],
+                "region": ["C"],
+            }
+        ),
+        "managers": pd.DataFrame(
+            {
+                "id_(branch)": ["B-002", "B-002"],
+                "manager": ["Bob", "Peter"],
+            }
+        ),
+    }
+
+    out = extract_branch_manager_summary(frames)
+
+    summary = out["BranchSummary"]
+    assert list(summary["manager"]) == ["Bob"]
