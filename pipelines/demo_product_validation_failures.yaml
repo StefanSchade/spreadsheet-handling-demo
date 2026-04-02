@@ -1,0 +1,13 @@
+io:
+  input:  { kind: json_dir, path: ./data/product_validation_failures }
+  output: { kind: xlsx,     path: ./tmp/product_validation_failures.xlsx }
+
+pipeline:
+  - step: validate
+    mode_duplicate_ids: fail
+    mode_missing_fk: fail
+    defaults:
+      id_field: id
+      label_field: name
+      detect_fk: true
+      helper_prefix: "_"

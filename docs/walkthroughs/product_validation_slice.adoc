@@ -1,0 +1,63 @@
+= Product Validation Slice
+
+This slice is intentionally negative. It uses broken business data to demonstrate that
+the pipeline can stop before workbook generation when core integrity rules are violated.
+
+== Purpose
+
+The first product slice shows successful spreadsheet-facing validation such as dropdown
+lists. This slice complements it by showing pipeline guardrails:
+
+* duplicate IDs
+* missing FK targets
+
+== Artifacts
+
+Dataset:
+
+* `data/product_validation_failures/product.json`
+* `data/product_validation_failures/product_manager.json`
+* `data/product_validation_failures/branch.json`
+
+Pipeline:
+
+* `pipelines/demo_product_validation_failures.yaml`
+
+The pipeline uses strict validation modes:
+
+* `mode_duplicate_ids: fail`
+* `mode_missing_fk: fail`
+
+== What Is Intentionally Broken
+
+The `product` table contains two deliberate problems:
+
+* duplicate `id` value `P-100`
+* missing FK target `PM-99` in `id_(product_manager)`
+
+== Run
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_validation_failures.yaml
+----
+
+== Expected Result
+
+The run is expected to fail.
+
+Current observed findings:
+
+* `duplicate_id` on `product.id` for `P-100`
+* `unresolvable_fk` on `product.id_(product_manager)` for `PM-99`
+
+This is part of the demo story, not an accident. The point of the slice is to show
+that validation is not only decorative Excel behavior, but also a pipeline-level guard
+against inconsistent relational data.
+
+== Relation To The First Product Slice
+
+Taken together, the two slices now show both sides of validation:
+
+* successful spreadsheet-side restrictions in the editable workbook
+* hard pipeline-side rejection of invalid source data

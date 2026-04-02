@@ -1,0 +1,16 @@
+[
+  {
+    "id": "P-100",
+    "name": "Starter Kit",
+    "id_(product_manager)": "PM-10",
+    "status": "active",
+    "category": "entry"
+  },
+  {
+    "id": "P-100",
+    "name": "Growth Kit Duplicate Id",
+    "id_(product_manager)": "PM-99",
+    "status": "active",
+    "category": "standard"
+  }
+]

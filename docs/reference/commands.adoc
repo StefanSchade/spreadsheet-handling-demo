@@ -34,6 +34,13 @@ Run the derived product overview slice:
 make run PIPELINE=./pipelines/demo_product_overview.yaml
 ----
 
+Run the intentionally failing validation slice:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_validation_failures.yaml
+----
+
 == Generic Demo Flows
 
 Run a custom pipeline:
