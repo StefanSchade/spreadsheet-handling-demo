@@ -34,9 +34,9 @@ fi
 export PYTHONPATH="$ROOT/plugins:$LIB_SRC/src${PYTHONPATH:+:$PYTHONPATH}"
 
 # Point our CLI commands to the module entrypoints (bypass console scripts)
-export PACK_CMD="$VENV/bin/python -m spreadsheet_handling.cli.sheets_pack"
-export UNPACK_CMD="$VENV/bin/python -m spreadsheet_handling.cli.sheets_unpack"
-export RUN_CMD="$VENV/bin/python -m spreadsheet_handling.cli.run"
+export PACK_CMD="$VENV/bin/python -m spreadsheet_handling.cli.apps.sheets_pack"
+export UNPACK_CMD="$VENV/bin/python -m spreadsheet_handling.cli.apps.sheets_unpack"
+export RUN_CMD="$VENV/bin/python -m spreadsheet_handling.cli.apps.run"
 
 # Helper: show which lib is used
 if [[ "${1:-}" == "which-lib" ]]; then

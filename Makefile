@@ -72,7 +72,7 @@ deps: setup
 # =========================
 
 .PHONY: run
-run: ## Execute a custom pipeline (usage: make run PIPELINE=./pipelines/demo_extraction.yaml)
+run: ## Execute a custom pipeline config (usage: make run PIPELINE=./pipelines/demo_extraction_with_io.yaml)
 	@set -e; \
 	if [[ -z "$(PIPELINE)" ]]; then \
 		echo "❌ No PIPELINE provided. Usage: make run PIPELINE=./pipelines/demo_*.yaml"; exit 2; \
@@ -80,9 +80,9 @@ run: ## Execute a custom pipeline (usage: make run PIPELINE=./pipelines/demo_ext
 	if [[ ! -f "$(PIPELINE)" ]]; then \
 		echo "❌ Pipeline file not found: $(PIPELINE)"; exit 2; \
 	fi; \
-	echo "Running pipeline (steps yaml): $(PIPELINE)"; \
+	echo "Running pipeline config: $(PIPELINE)"; \
 	$(RUN_CMD) \
-	  --pipeline-yaml "$(PIPELINE)" \
+	  --config "$(PIPELINE)" \
 	  $(if $(IN_KIND),--in-kind '$(IN_KIND)') \
 	  $(if $(IN_PATH),--in-path '$(IN_PATH)') \
 	  $(if $(OUT_KIND),--out-kind '$(OUT_KIND)') \
