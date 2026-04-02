@@ -1,0 +1,266 @@
+= Demo Feature Matrix
+
+This document captures the capabilities we want the demo repository to make visible.
+It is not yet a user guide. It is the planning layer between the core library and a
+future walkthrough-oriented demo dataset.
+
+== Why This Lives In The Demo Repo
+
+The demo repository is our current consumer benchmark. That makes it the right home
+for:
+
+* the feature inventory we want to demonstrate
+* the reference datasets we will curate
+* the walkthrough docs that explain how JSON, pipeline config, and spreadsheet output
+  relate to each other
+
+The main repository remains the source of implementation details, FTR history, and
+internal architecture notes.
+
+== Scope
+
+The goal is not to show every internal subsystem. The goal is to show the user-facing
+capabilities that matter when building or reviewing spreadsheet workflows.
+
+== Roundtrip Stance
+
+Our primary demo shape is:
+
+. JSON as the source of truth
+. pipeline config as the transformation contract
+. Excel as the editable working format
+. JSON re-export as the closing roundtrip step
+
+This should work for most of the user-facing flows we want to demonstrate. Some
+capabilities may currently be stronger on the Excel-to-JSON side than on the reverse
+direction. We should track those explicitly instead of hiding them.
+
+== Candidate Feature Set
+
+[cols="1,1,2,2",options="header"]
+|===
+| Area | Capability | User-visible effect in Excel / artifacts | Likely source material
+
+| Data model
+| Multiple tables / sheets
+| Workbook contains several related sheets
+| consumer smoke tests, existing demo pipelines
+
+| Data model
+| Primary-key based tables
+| Stable row identity and predictable references
+| pipeline defaults, existing JSON fixtures
+
+| Data model
+| Foreign-key relationships
+| Related tables can be validated and enriched
+| FK helper FTRs, pipeline tests
+
+| Data model
+| Nested or structured source data
+| JSON-side structure becomes tabular sheets
+| demo extraction plugins, JSON input fixtures
+
+| Spreadsheet UX
+| Auto-filter
+| Header row gets filter controls
+| IR write-path and consumer smoke tests
+
+| Spreadsheet UX
+| Freeze header
+| Header remains visible while scrolling
+| IR write-path and overrides tests
+
+| Spreadsheet UX
+| Header styling
+| Header row receives fill/bold treatment
+| xlsx writer styling tests
+
+| Spreadsheet UX
+| Helper-column styling
+| FK helper columns can be visually distinguished
+| FK helper refactor notes, styling config
+
+| Validation
+| Dropdown / list validation
+| Restricted values appear as selectable lists
+| column-map and validation tests
+
+| Validation
+| Referential-integrity checks
+| Broken FK relations can be detected in pipeline validation
+| pipeline validation tests
+
+| Validation
+| Duplicate / missing ID checks
+| Data quality issues can be surfaced before export
+| pipeline validation tests
+
+| Metadata
+| Sheet-specific overrides
+| Different sheets receive different options
+| YAML overrides tests
+
+| Structure
+| Multi-row headers
+| Workbook shows grouped header bands
+| IR multiheader tests
+
+| Structure
+| Header flatten / unflatten at edges
+| JSON/XML representations can use flattened field names
+| helper and XML multiheader tests
+
+| Extensibility
+| Plugin transformation via dotted path
+| Domain-specific enrichment can be injected into pipeline
+| demo extraction plugin, consumer smoke
+
+| I/O
+| JSON to XLSX roundtrip
+| Source data can be packaged into workbook output
+| consumer smoke and run roundtrip tests
+
+| I/O
+| XLSX back to JSON
+| Workbook edits can be extracted again
+| xlsx read-path tests
+
+| I/O
+| Optional XML / CSV edge flows
+| Same frame model can be emitted to alternate formats
+| XML/CSV backend tests
+
+| Rendering meta
+| Named ranges
+| Workbook can expose stable named regions for formulas or validations
+| named range tests
+|===
+
+== Current Status Snapshot
+
+This is only a first-pass consumer view from the demo repository.
+
+[cols="2,1,3",options="header"]
+|===
+| Capability cluster | Status | Notes
+
+| JSON -> XLSX baseline
+| already demoed
+| Confirmed in existing demo flows and with the new product slice pipeline.
+
+| XLSX -> JSON baseline
+| already demoed
+| Confirmed for the new product slice. Flattening headers before export keeps helper columns readable after unpack.
+
+| FK helper columns
+| already demoed
+| Existing helper pipeline works and the new product slice is designed to showcase it more clearly.
+
+| Dotted-path plugin steps
+| already demoed
+| Existing demo extraction pipelines already use dotted plugin references.
+
+| Sheet-specific overrides
+| partially demoed
+| Supported in core, but not yet highlighted in a clean walkthrough-oriented demo dataset.
+
+| Dropdown / list validation
+| partially demoed
+| Covered in core tests, not yet surfaced in the new curated product slice.
+
+| Header styling / freeze / auto-filter
+| already demoed
+| Existing demo and test coverage show these, and the new product pipeline enables them explicitly.
+
+| Multi-row headers
+| missing from curated demo
+| Strongly present in core tests, but not yet included in the first business-facing dataset.
+
+| XML / CSV edge flows
+| partially demoed
+| Present in core capabilities, but secondary from the current demo-user perspective.
+
+| Named ranges
+| missing from curated demo
+| Present in core tests, but not yet turned into a visible demo story.
+|===
+
+== First Demo Slice: Products
+
+The first curated demo should use a business-friendly product theme. It is easy to
+understand, broadly reusable, and expandable without domain-specific knowledge.
+
+The first slice should stay intentionally small:
+
+. `product`
+. `product_manager`
+. `branch`
+
+Initial relationship shape:
+
+* product n:1 product_manager
+* product_manager n:1 branch
+
+This gives us a useful first benchmark:
+
+* multiple related sheets
+* visible FK helper columns
+* validation of references
+* spreadsheet-friendly output
+* later room for plugin-driven summaries
+
+=== Proposed First Data Shape
+
+For the first slice we favor simplicity over perfect business naming inside the core FK
+mechanism. That means the initial JSON tables use the common columns `id` and `name`,
+because the current helper pipeline works most cleanly when all target sheets share the
+same identity and label fields.
+
+Example:
+
+* `product.id`, `product.name`, `product.id_(product_manager)`, `product.status`
+* `product_manager.id`, `product_manager.name`, `product_manager.id_(branch)`, `product_manager.email`
+* `branch.id`, `branch.name`, `branch.country`, `branch.region`
+
+This still reads as a business model, while fitting today's FK helper behavior without
+extra plumbing.
+
+=== What This Slice Should Demonstrate First
+
+. FK-derived helper columns next to reference fields
+. workbook-level UX such as auto-filter, freeze header, and header styling
+. referential validation
+. clean JSON -> XLSX -> JSON storytelling
+
+The join-like summary table should come later, once the base three-sheet story is
+stable and easy to explain.
+
+=== Current Product Slice Result
+
+The first product slice now runs through both directions:
+
+* JSON -> XLSX via `demo_product_business_slice.yaml`
+* XLSX -> JSON via unpack into a temporary output directory
+
+For this slice we currently flatten headers before writing so that helper columns come
+back as readable JSON keys such as `_product_manager_name` instead of tuple-like
+serialized header values.
+
+== Follow-up Build Order
+
+. Confirm this feature list against the actual current core behavior.
+. Mark each capability as: planned, already demoed, partially demoed, or missing.
+. Create a single reference dataset that covers the first product slice.
+. Add one pipeline config that builds the workbook from that dataset.
+. Add an expected-output walkthrough:
+  input JSON, pipeline YAML, resulting workbook sheets, and notable spreadsheet
+  features.
+. Grow from there only when the first slice is stable.
+
+== Open Questions
+
+* Do we want one maximal reference dataset, or a small set of themed datasets?
+* Which validation outcomes should be shown directly in the first walkthrough?
+* Should XML / CSV stay part of the first user-facing demo, or remain secondary?
+* Which capabilities are "internal but real" versus worth documenting for users?

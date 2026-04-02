@@ -1,0 +1,14 @@
+[
+  {
+    "id": "PM-10",
+    "name": "Marta Vogel",
+    "id_(branch)": "B-001",
+    "email": "marta.vogel@example.test"
+  },
+  {
+    "id": "PM-20",
+    "name": "Leon Bauer",
+    "id_(branch)": "B-002",
+    "email": "leon.bauer@example.test"
+  }
+]

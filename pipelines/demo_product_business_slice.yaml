@@ -1,0 +1,31 @@
+io:
+  input:  { kind: json_dir, path: ./data/product_business_slice }
+  output: { kind: xlsx,     path: ./tmp/product_business_slice.xlsx }
+
+excel:
+  auto_filter: true
+  freeze_header: true
+  header_fill_rgb: DDDDDD
+
+pipeline:
+  - step: validate
+    mode_duplicate_ids: warn
+    mode_missing_fk: warn
+    defaults:
+      id_field: id
+      label_field: name
+      detect_fk: true
+      helper_prefix: "_"
+
+  - step: apply_fks
+    defaults:
+      id_field: id
+      label_field: name
+      detect_fk: true
+      helper_prefix: "_"
+
+  - step: reorder_helpers
+    helper_prefix: "_"
+
+  - step: flatten_headers
+    mode: level0

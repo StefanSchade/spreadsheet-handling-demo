@@ -1,0 +1,23 @@
+[
+  {
+    "id": "P-100",
+    "name": "Starter Kit",
+    "id_(product_manager)": "PM-10",
+    "status": "active",
+    "category": "entry"
+  },
+  {
+    "id": "P-200",
+    "name": "Growth Kit",
+    "id_(product_manager)": "PM-10",
+    "status": "active",
+    "category": "standard"
+  },
+  {
+    "id": "P-300",
+    "name": "Enterprise Suite",
+    "id_(product_manager)": "PM-20",
+    "status": "pilot",
+    "category": "premium"
+  }
+]
