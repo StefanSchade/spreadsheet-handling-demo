@@ -1,0 +1,72 @@
+= Commands
+
+This page collects the most relevant demo commands.
+
+== Environment
+
+Use local core checkout:
+
+[source,bash]
+----
+make setup-lib-local
+----
+
+Switch back to PyPI:
+
+[source,bash]
+----
+make setup-lib-pypi
+----
+
+== Product Slice
+
+Run the curated product slice:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_business_slice.yaml
+----
+
+== Generic Demo Flows
+
+Run a custom pipeline:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_foo.yaml
+----
+
+Pack all datasets under `data/` to workbooks:
+
+[source,bash]
+----
+make pack
+----
+
+Unpack current-SHA workbooks back to JSON:
+
+[source,bash]
+----
+make unpack
+----
+
+Run both:
+
+[source,bash]
+----
+make roundtrip
+----
+
+Verification flow:
+
+[source,bash]
+----
+make verify
+----
+
+Extraction flow:
+
+[source,bash]
+----
+make extract
+----

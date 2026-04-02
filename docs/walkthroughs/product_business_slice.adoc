@@ -1,0 +1,62 @@
+= Product Business Slice
+
+This is the first curated demo slice. It gives us a small but expressive business model
+for end-to-end demo and release verification.
+
+== Theme
+
+The slice uses three related tables:
+
+* `product`
+* `product_manager`
+* `branch`
+
+Relationship shape:
+
+* product n:1 product_manager
+* product_manager n:1 branch
+
+== Why This Slice Exists
+
+It is small enough to understand quickly, but rich enough to show visible spreadsheet
+behavior:
+
+* multiple sheets
+* FK helper columns
+* list validations
+* per-sheet overrides
+* JSON -> XLSX -> JSON roundtrip
+
+== Artifacts
+
+Dataset:
+
+* `data/product_business_slice/product.json`
+* `data/product_business_slice/product_manager.json`
+* `data/product_business_slice/branch.json`
+* `data/product_business_slice/overrides.yaml`
+
+Pipeline:
+
+* `pipelines/demo_product_business_slice.yaml`
+
+== What To Look For In Excel
+
+On `product`:
+
+* helper column for `product_manager`
+* list validations on `status` and `category`
+* filter enabled
+* freeze enabled
+
+On `branch`:
+
+* list validation on `country`
+* filter disabled
+* freeze disabled
+* distinct header styling via sheet override
+
+== Current Notes
+
+For this slice we flatten headers before writing so that helper columns come back from
+unpack as readable JSON keys such as `_product_manager_name`.
