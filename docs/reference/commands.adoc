@@ -27,6 +27,13 @@ Run the curated product slice:
 make run PIPELINE=./pipelines/demo_product_business_slice.yaml
 ----
 
+Run the derived product overview slice:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_overview.yaml
+----
+
 == Generic Demo Flows
 
 Run a custom pipeline:

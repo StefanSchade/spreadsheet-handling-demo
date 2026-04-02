@@ -20,5 +20,8 @@ demo repository.
 * First walkthrough:
   xref:walkthroughs/product_business_slice.adoc[Product Business Slice]
 
+* Follow-up walkthrough:
+  xref:walkthroughs/product_overview_slice.adoc[Product Overview Slice]
+
 * Command reference:
   xref:reference/commands.adoc[Commands]

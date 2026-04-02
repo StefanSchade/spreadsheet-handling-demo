@@ -5,6 +5,7 @@ from typing import Dict
 import pandas as pd
 
 from plugins.extractions.branch_manager_summary import extract_branch_manager_summary
+from plugins.extractions.product_overview import extract_product_overview
 
 Frames = Dict[str, pd.DataFrame]
 
@@ -55,3 +56,50 @@ def test_extract_branch_manager_summary_keeps_first_manager_per_branch() -> None
 
     summary = out["BranchSummary"]
     assert list(summary["manager"]) == ["Bob"]
+
+
+def test_extract_product_overview_builds_report_table() -> None:
+    frames: Frames = {
+        "product": pd.DataFrame(
+            {
+                "id": ["P-100"],
+                "name": ["Starter Kit"],
+                "id_(product_manager)": ["PM-10"],
+                "status": ["active"],
+                "category": ["entry"],
+            }
+        ),
+        "product_manager": pd.DataFrame(
+            {
+                "id": ["PM-10"],
+                "name": ["Marta Vogel"],
+                "id_(branch)": ["B-001"],
+                "email": ["marta@example.test"],
+            }
+        ),
+        "branch": pd.DataFrame(
+            {
+                "id": ["B-001"],
+                "name": ["Berlin Hub"],
+                "country": ["DE"],
+                "region": ["Central Europe"],
+            }
+        ),
+    }
+
+    out = extract_product_overview(frames)
+
+    assert list(out) == ["ProductOverview"]
+    overview = out["ProductOverview"]
+    assert list(overview.columns) == [
+        "product_id",
+        "product_name",
+        "status",
+        "category",
+        "product_manager_name",
+        "branch_name",
+        "branch_country",
+        "branch_region",
+    ]
+    assert overview.iloc[0]["product_manager_name"] == "Marta Vogel"
+    assert overview.iloc[0]["branch_name"] == "Berlin Hub"

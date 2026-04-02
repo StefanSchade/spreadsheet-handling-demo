@@ -1,0 +1,48 @@
+= Product Overview Slice
+
+This is the second demo slice built on top of the same product business data.
+
+== Purpose
+
+While the first slice focuses on editable relational tables, this slice focuses on a
+consumer-friendly report view derived from them.
+
+It answers a simple question:
+
+* which product belongs to which manager and branch?
+
+== Artifacts
+
+Pipeline:
+
+* `pipelines/demo_product_overview.yaml`
+
+Plugin:
+
+* `plugins/extractions/product_overview.py`
+
+== What It Demonstrates
+
+* plugin-driven derivation of a report table
+* reuse of the same source dataset for a second consumer view
+* a simple "joined" business view without changing the source-of-truth JSON
+
+== Expected Output Shape
+
+The generated report sheet contains columns such as:
+
+* `product_id`
+* `product_name`
+* `status`
+* `category`
+* `product_manager_name`
+* `branch_name`
+* `branch_country`
+* `branch_region`
+
+== Run
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_overview.yaml
+----

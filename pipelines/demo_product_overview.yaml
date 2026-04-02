@@ -1,0 +1,12 @@
+io:
+  input:  { kind: json_dir, path: ./data/product_business_slice }
+  output: { kind: xlsx,     path: ./tmp/product_overview.xlsx }
+
+excel:
+  auto_filter: true
+  freeze_header: true
+  header_fill_rgb: D9D2E9
+
+pipeline:
+  - step: plugin
+    dotted: plugins.extractions.product_overview:extract_product_overview
