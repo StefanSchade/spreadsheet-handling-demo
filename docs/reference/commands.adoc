@@ -62,6 +62,13 @@ Verify the grouped headers:
 .venv/bin/pytest tests/test_multiheader_demo.py -q
 ----
 
+Verify the editable roundtrip path:
+
+[source,bash]
+----
+.venv/bin/pytest tests/test_roundtrip_editing_demo.py -q
+----
+
 == Generic Demo Flows
 
 Run a custom pipeline:

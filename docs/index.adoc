@@ -32,5 +32,8 @@ demo repository.
 * Multi-header walkthrough:
   xref:walkthroughs/product_multiheader_slice.adoc[Product Multi-Header Slice]
 
+* Roundtrip editing walkthrough:
+  xref:walkthroughs/product_roundtrip_editing_slice.adoc[Product Roundtrip Editing Slice]
+
 * Command reference:
   xref:reference/commands.adoc[Commands]

@@ -1,0 +1,58 @@
+= Product Roundtrip Editing Slice
+
+This slice demonstrates the full human-in-the-loop path:
+
+. generate a workbook from JSON
+. edit the workbook
+. unpack the workbook back to JSON
+. verify that the intended edits survive the roundtrip
+
+== Why This Matters
+
+The core value of the project is not only export and import in isolation, but the
+editable workflow in between. This slice makes that concrete.
+
+== Source
+
+It reuses the existing product business slice and does not require a new dataset.
+
+Run source workbook generation:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_product_business_slice.yaml
+----
+
+== Editing Story
+
+For the current demo verification we use two small edits:
+
+* change `product.status` for `P-100` from `active` to `pilot`
+* change `branch.region` for `B-001` from `Central Europe` to `EMEA`
+
+These are simple, user-plausible spreadsheet edits that should survive the return to
+JSON.
+
+== Verification
+
+The automated demo test performs the whole path:
+
+[source,bash]
+----
+.venv/bin/pytest tests/test_roundtrip_editing_demo.py -q
+----
+
+That test:
+
+* generates the workbook from the demo pipeline
+* edits cells with openpyxl
+* unpacks the edited workbook
+* asserts the changed JSON values are present
+
+== Scope
+
+This slice is intentionally narrow:
+
+* it does not try to prove every possible edit is safe
+* it does not treat helper columns as the editable source of truth
+* it focuses on a small set of expected user edits in ordinary data cells

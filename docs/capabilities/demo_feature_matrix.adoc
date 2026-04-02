@@ -127,6 +127,11 @@ direction. We should track those explicitly instead of hiding them.
 | xlsx read-path tests
 
 | I/O
+| Roundtrip editing
+| A generated workbook can be edited and then read back with the intended cell changes preserved
+| demo roundtrip editing slice
+
+| I/O
 | Optional XML / CSV edge flows
 | Same frame model can be emitted to alternate formats
 | XML/CSV backend tests
@@ -152,6 +157,10 @@ This is only a first-pass consumer view from the demo repository.
 | XLSX -> JSON baseline
 | already demoed
 | Confirmed for the new product slice. Flattening headers before export keeps helper columns readable after unpack.
+
+| Roundtrip editing
+| already demoed
+| The product roundtrip editing slice now covers generate -> edit workbook -> unpack -> verify changed JSON values.
 
 | FK helper columns
 | already demoed
