@@ -4,7 +4,7 @@
 
 CONFIG := sheets.yaml
 LIB_SRC ?= ../spreadsheet-handling
-LIB_PYPI_VERSION ?= 0.1.0b4
+LIB_PYPI_VERSION ?= 0.1.0b5
 
 # =========================
 # Virtualenv / Python
