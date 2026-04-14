@@ -41,7 +41,7 @@ Run the intentionally failing validation slice:
 make run PIPELINE=./pipelines/demo_product_validation_failures.yaml
 ----
 
-Verify named ranges on the existing product workbook:
+Verify named ranges on a freshly generated product workbook:
 
 [source,bash]
 ----
@@ -55,7 +55,7 @@ Run the multi-header product slice:
 make run PIPELINE=./pipelines/demo_product_multiheader.yaml
 ----
 
-Verify the grouped headers:
+Verify the grouped headers on a freshly generated workbook:
 
 [source,bash]
 ----
@@ -69,6 +69,15 @@ Verify the editable roundtrip path:
 .venv/bin/pytest tests/test_roundtrip_editing_demo.py -q
 ----
 
+Read a workbook back to JSON through `sheets-run`:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_workbook_reimport.yaml \
+  IN_PATH=./tmp/product_business_slice.xlsx \
+  OUT_PATH=./tmp/product_business_slice_reimported
+----
+
 == Generic Demo Flows
 
 Run a custom pipeline:
@@ -78,24 +87,12 @@ Run a custom pipeline:
 make run PIPELINE=./pipelines/demo_foo.yaml
 ----
 
-Pack all datasets under `data/` to workbooks:
+Legacy compatibility shims:
 
 [source,bash]
 ----
 make pack
-----
-
-Unpack current-SHA workbooks back to JSON:
-
-[source,bash]
-----
 make unpack
-----
-
-Run both:
-
-[source,bash]
-----
 make roundtrip
 ----
 

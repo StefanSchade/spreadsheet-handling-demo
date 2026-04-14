@@ -156,11 +156,11 @@ This is only a first-pass consumer view from the demo repository.
 
 | XLSX -> JSON baseline
 | already demoed
-| Confirmed for the new product slice. Flattening headers before export keeps helper columns readable after unpack.
+| Confirmed for the new product slice. Flattening headers before export keeps helper columns readable after re-import through `sheets-run`.
 
 | Roundtrip editing
 | already demoed
-| The product roundtrip editing slice now covers generate -> edit workbook -> unpack -> verify changed JSON values.
+| The product roundtrip editing slice now covers generate -> edit workbook -> re-import -> verify changed JSON values.
 
 | FK helper columns
 | already demoed

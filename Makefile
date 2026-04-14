@@ -37,9 +37,9 @@ STAMP_VENV   := $(STAMP_DIR)/venv.ok
 # =========================
 # CLI bindings (venv executables)
 # =========================
+RUN_CMD      := $(VENV)/bin/sheets-run
 PACK_CMD     := $(VENV)/bin/sheets-pack
 UNPACK_CMD   := $(VENV)/bin/sheets-unpack
-RUN_CMD      := $(VENV)/bin/sheets-run
 
 # =========================
 # Environment & dependencies
@@ -72,7 +72,7 @@ deps: setup
 # =========================
 
 .PHONY: run
-run: ## Execute a custom pipeline config (usage: make run PIPELINE=./pipelines/demo_extraction_with_io.yaml)
+run: ## Execute a checked-in run config / pipeline (preferred demo entry point)
 	@set -e; \
 	if [[ -z "$(PIPELINE)" ]]; then \
 		echo "❌ No PIPELINE provided. Usage: make run PIPELINE=./pipelines/demo_*.yaml"; exit 2; \
@@ -90,7 +90,7 @@ run: ## Execute a custom pipeline config (usage: make run PIPELINE=./pipelines/d
 
 
 .PHONY: pack
-pack: ## JSON -> XLSX for every dataset under ./data (run `make setup` once before)
+pack: ## Legacy JSON -> XLSX shim for all datasets (prefer `make run PIPELINE=...`)
 	@mkdir -p "$(TMP_DIR)"
 	@for d in $(PACK_SETS); do \
 		out="$(TMP_DIR)/$${d}-$(SHA).xlsx"; \
@@ -100,11 +100,11 @@ pack: ## JSON -> XLSX for every dataset under ./data (run `make setup` once befo
 	@echo "OK: workbooks in $(TMP_DIR)"
 
 .PHONY: unpack
-unpack: ## XLSX -> JSON only for current $(SHA) (skip Excel lock files)
+unpack: ## Legacy XLSX -> JSON shim (prefer `make run` with demo_workbook_reimport.yaml)
 	@UNPACK_CMD='$(UNPACK_CMD)' bash scripts/unpack_current_sha.sh "$(TMP_DIR)" "$(DATA_DIR)" "$(SHA)"
 
 .PHONY: roundtrip
-roundtrip: pack unpack ## Convenience: pack + unpack
+roundtrip: pack unpack ## Legacy convenience alias (prefer explicit run-based flows)
 
 .PHONY: verify
 verify: ## Run verification pipeline via sheets-run (json_dir -> xlsx)

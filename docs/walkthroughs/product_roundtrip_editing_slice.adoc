@@ -4,7 +4,7 @@ This slice demonstrates the full human-in-the-loop path:
 
 . generate a workbook from JSON
 . edit the workbook
-. unpack the workbook back to JSON
+. re-import the workbook back to JSON
 . verify that the intended edits survive the roundtrip
 
 == Why This Matters
@@ -46,8 +46,17 @@ That test:
 
 * generates the workbook from the demo pipeline
 * edits cells with openpyxl
-* unpacks the edited workbook
+* re-imports the edited workbook through `sheets-run`
 * asserts the changed JSON values are present
+
+The manual re-import command is:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_workbook_reimport.yaml \
+  IN_PATH=./tmp/product_business_slice.xlsx \
+  OUT_PATH=./tmp/product_business_slice_reimported
+----
 
 == Scope
 

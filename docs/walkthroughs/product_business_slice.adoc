@@ -25,7 +25,7 @@ behavior:
 * FK helper columns
 * list validations
 * per-sheet overrides
-* JSON -> XLSX -> JSON roundtrip
+* JSON -> XLSX -> JSON re-import roundtrip
 
 == Artifacts
 
@@ -118,7 +118,7 @@ The pipeline combines five ideas in one small flow:
 * `validate` checks duplicate IDs and missing FK targets
 * `add_validations` adds Excel list validations
 * `apply_fks` materializes helper columns
-* `flatten_headers` keeps unpacked JSON readable on the way back
+* `flatten_headers` keeps re-imported JSON readable on the way back
 
 The relevant shape is:
 
@@ -169,10 +169,10 @@ On `branch`:
 * freeze disabled
 * distinct header styling via sheet override
 
-== What Comes Back On Unpack
+== What Comes Back On Re-import
 
-After the workbook is unpacked again, the helper columns stay understandable because
-the pipeline flattens headers before export.
+After the workbook is read back again, the helper columns stay understandable
+because the pipeline flattens headers before export.
 
 Examples:
 
@@ -198,5 +198,5 @@ or multi-header examples.
 
 == Current Notes
 
-For this slice we flatten headers before writing so that helper columns come back from
-unpack as readable JSON keys such as `_product_manager_name`.
+For this slice we flatten headers before writing so that helper columns come
+back from re-import as readable JSON keys such as `_product_manager_name`.

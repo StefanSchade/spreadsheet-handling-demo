@@ -6,7 +6,11 @@ from pathlib import Path
 from openpyxl import load_workbook
 
 from spreadsheet_handling.cli.apps.run import main as run_main
-from spreadsheet_handling.cli.apps.sheets_unpack import main as unpack_main
+
+
+def _run_demo(repo_root: Path, *argv: str) -> None:
+    exit_code = run_main(list(argv))
+    assert exit_code == 0, f"demo run failed from {repo_root}"
 
 
 def _header_map(ws) -> dict[str, int]:
@@ -18,14 +22,15 @@ def test_product_roundtrip_editing_preserves_user_changes(tmp_path, monkeypatch)
     monkeypatch.chdir(repo_root)
 
     workbook_path = tmp_path / "product_business_slice.xlsx"
-    unpack_dir = tmp_path / "unpacked"
+    reimport_dir = tmp_path / "reimported"
 
-    run_main([
+    _run_demo(
+        repo_root,
         "--config",
         "pipelines/demo_product_business_slice.yaml",
         "--out-path",
         str(workbook_path),
-    ])
+    )
 
     wb = load_workbook(workbook_path)
     try:
@@ -42,10 +47,18 @@ def test_product_roundtrip_editing_preserves_user_changes(tmp_path, monkeypatch)
     finally:
         wb.close()
 
-    unpack_main([str(workbook_path), "-o", str(unpack_dir)])
+    _run_demo(
+        repo_root,
+        "--config",
+        "pipelines/demo_workbook_reimport.yaml",
+        "--in-path",
+        str(workbook_path),
+        "--out-path",
+        str(reimport_dir),
+    )
 
-    products = json.loads((unpack_dir / "product.json").read_text(encoding="utf-8"))
-    branches = json.loads((unpack_dir / "branch.json").read_text(encoding="utf-8"))
+    products = json.loads((reimport_dir / "product.json").read_text(encoding="utf-8"))
+    branches = json.loads((reimport_dir / "branch.json").read_text(encoding="utf-8"))
 
     assert products[0]["status"] == "pilot"
     assert branches[0]["region"] == "EMEA"

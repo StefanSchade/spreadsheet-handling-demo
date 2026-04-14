@@ -25,6 +25,7 @@ Practical summary:
 * Treat `.venv/`, `target/`, `tmp/`, generated workbooks, and similar local
   state as non-source unless the task explicitly includes them.
 * Use Conventional Commits with informative subjects; if the change maps to a
-  concrete feature ticket, include that scope.
+  concrete feature ticket, include the FTR ID prominently, preferably as the
+  Conventional Commit scope.
 
 For repo-committing agent behavior, see `AGENT.md`.
