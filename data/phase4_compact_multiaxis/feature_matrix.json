@@ -1,0 +1,23 @@
+[
+  {
+    "feature_id": "F-010",
+    "feature_label": "Price can be edited",
+    "P-100": "E",
+    "P-200": "E-R-K",
+    "P-300": ""
+  },
+  {
+    "feature_id": "F-020",
+    "feature_label": "Calculated tax field",
+    "P-100": "S",
+    "P-200": "S",
+    "P-300": "R"
+  },
+  {
+    "feature_id": "F-030",
+    "feature_label": "Reserved future toggle",
+    "P-100": "",
+    "P-200": "",
+    "P-300": ""
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "id": "DE",
+    "label": "Germany"
+  },
+  {
+    "id": "EU",
+    "label": "European Union"
+  },
+  {
+    "id": "US",
+    "label": "United States"
+  }
+]

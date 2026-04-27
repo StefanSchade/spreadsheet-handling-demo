@@ -1,0 +1,16 @@
+[
+  {
+    "feature_id": "F-040",
+    "feature_label": "Token order smoke test",
+    "P-100": "K-E",
+    "P-200": "S",
+    "P-300": ""
+  },
+  {
+    "feature_id": "F-050",
+    "feature_label": "Mixed token flags",
+    "P-100": "E-R",
+    "P-200": "",
+    "P-300": "K"
+  }
+]

@@ -1,0 +1,47 @@
+= Phase 4 Integration Notes
+
+These notes capture consumer-facing friction observed while integrating the
+local Phase 4 core changes into the demo repository.
+
+== Local Library Link
+
+`make setup-lib-local` works and installs the sibling `../spreadsheet-handling`
+checkout as an editable dependency.
+
+Observed friction:
+
+* `pyproject.toml` still pins `spreadsheet-handling==0.1.0b5`, so pip reports a
+  dependency conflict after the editable install. The demo still runs, but the
+  warning is noisy for local roundtrip work.
+
+== Compact Multiaxis Configuration
+
+Observed friction:
+
+* `drop_empty: true` is natural for sparse relations, but surprising for matrix
+  roundtrip: an all-empty row disappears. The demo now shows this beside the
+  `drop_empty: false` lossless mode.
+* `whole_cell_code` and `split_tokens` must be understood as different modes.
+  `E-R-K` can be one configured code, while `K-E` can also be two configured
+  tokens in another pipeline.
+* `row_keys` is explicit and predictable. Including `feature_label` as a row key
+  is a user choice; otherwise only the stable ID would roundtrip.
+* `column_key`, `code`, and `group` are generic enough, but the first useful
+  YAML still needs several parameters: `matrix`, `output`, `row_keys`,
+  `value_columns`, `mode`, and validation source.
+* `group` is useful as a generic projection from legend metadata. It should not
+  be read as domain semantics by the generic transform.
+
+== ODS Run Path
+
+Observed blocker:
+
+* The ODS adapter existed, but `sheets-run` did not route `ods` or `calc` through
+  the orchestrator. The local core checkout now routes both input and output
+  kinds.
+
+Manual follow-up:
+
+* Open `tmp/phase4_compact_multiaxis.ods` in LibreOffice/Calc on Linux and check
+  the visual layout, legend blocks, hidden `_meta` behavior, and editable
+  roundtrip expectations.

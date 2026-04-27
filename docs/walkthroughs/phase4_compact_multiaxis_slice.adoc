@@ -1,0 +1,71 @@
+= Phase 4 Compact Multiaxis Slice
+
+This slice demonstrates the first consumer-facing path for the Phase 4 compact
+transform features.
+
+The source fixture lives in:
+
+[source,text]
+----
+data/phase4_compact_multiaxis/
+----
+
+It contains:
+
+* `feature_matrix.json`: whole-cell compact codes such as `E` and `E-R-K`
+* `feature_token_matrix.json`: split-token examples such as `K-E`
+* `product_variant.json` and `market.json`: explicit axis context, not inferred
+* `_meta.yaml`: legend blocks for code and token validation
+
+== Sparse Expansion
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_expand.yaml
+----
+
+This creates `tmp/phase4_compact_multiaxis_expanded/feature_product_codes.json`.
+Empty cells are dropped because `drop_empty: true` is the default sparse mode.
+
+== Roundtrip Modes
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_roundtrip.yaml
+----
+
+The output intentionally contains two matrix roundtrips:
+
+* `feature_matrix_sparse_roundtrip.json` uses sparse expansion. The all-empty
+  row `F-030` disappears.
+* `feature_matrix_lossless_roundtrip.json` uses `drop_empty: false`. The full
+  matrix shape is preserved.
+
+The same pipeline also expands `feature_token_matrix.json` with
+`mode: split_tokens` and contracts it with a canonical token order. For example,
+`K-E` becomes `E-K`.
+
+== Workbook Output
+
+XLSX:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_workbook.yaml
+----
+
+ODS:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_workbook.yaml \
+  OUT_KIND=ods OUT_PATH=./tmp/phase4_compact_multiaxis.ods
+----
+
+The ODS command uses the same YAML pipeline and only changes the output backend.
+
+== Notes
+
+The demo treats compact codes as configured data values. It does not infer
+products, markets, labels, or dense matrix axes from sheet positions or names.
+Future dense-axis reconstruction should stay explicit.

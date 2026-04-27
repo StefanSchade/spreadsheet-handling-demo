@@ -140,6 +140,26 @@ direction. We should track those explicitly instead of hiding them.
 | Named ranges
 | Workbook can expose stable named regions for formulas or validations
 | named range tests
+
+| Compact transforms
+| Cross-table expansion
+| Matrix columns can become explicit relation rows
+| Phase 4 compact multiaxis demo fixture
+
+| Compact transforms
+| Cell code decoding
+| Whole-cell codes or split tokens can be validated from explicit config
+| Phase 4 compact multiaxis demo fixture
+
+| Compact transforms
+| Compact multiaxis composition
+| XRef and cell codec steps can be composed from YAML
+| Phase 4 compact multiaxis demo pipeline
+
+| I/O
+| ODS run path
+| The same demo workbook can be written through the ODS adapter
+| Phase 4 workbook pipeline with `OUT_KIND=ods`
 |===
 
 == Current Status Snapshot
@@ -193,4 +213,12 @@ This is only a first-pass consumer view from the demo repository.
 | Named ranges
 | already demoed
 | The product workbook can now be used as an explicit named-range demo and verification target.
+
+| Phase 4 compact transforms
+| newly demoed
+| `demo_phase4_compact_multiaxis_*` shows sparse relation expansion, lossless roundtrip via `drop_empty: false`, token canonicalization, and generic `group` projection.
+
+| ODS through `sheets-run`
+| newly demoed
+| The Phase 4 workbook pipeline can now be emitted as ODS via `OUT_KIND=ods`; interactive Calc validation is still a manual follow-up on Linux.
 |===

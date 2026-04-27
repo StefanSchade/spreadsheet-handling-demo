@@ -32,8 +32,14 @@ demo repository.
 * Multi-header walkthrough:
   xref:walkthroughs/product_multiheader_slice.adoc[Product Multi-Header Slice]
 
+* Phase 4 compact multiaxis walkthrough:
+  xref:walkthroughs/phase4_compact_multiaxis_slice.adoc[Phase 4 Compact Multiaxis Slice]
+
 * Roundtrip editing walkthrough:
   xref:walkthroughs/product_roundtrip_editing_slice.adoc[Product Roundtrip Editing Slice]
 
 * Command reference:
   xref:reference/commands.adoc[Commands]
+
+* Phase 4 integration notes:
+  xref:reference/phase4_integration_notes.adoc[Phase 4 Integration Notes]

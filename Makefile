@@ -21,7 +21,7 @@ PYTHON       := $(VENV)/bin/python
 ROOT         ?= $(CURDIR)/
 DATA_DIR     ?= ./data
 TMP_DIR      ?= ./tmp
-BUILD_DIR    ?= ./target
+BUILD_DIR    ?= ./build
 SHA          ?= $(shell git rev-parse --short HEAD)
 
 # All top-level data sets (each dir under ./data becomes one workbook)
@@ -159,7 +159,7 @@ snapshot: ## Optional: repo snapshot (script is not part of this demo repository
 	fi
 
 .PHONY: clean
-clean: ## Remove tmp and target
+clean: ## Remove tmp and build
 	rm -rf "$(TMP_DIR)" "$(BUILD_DIR)"
 
 $(STAMP_DIR):

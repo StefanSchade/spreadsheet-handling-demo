@@ -1,0 +1,32 @@
+io:
+  input:  { kind: json_dir, path: ./data/phase4_compact_multiaxis }
+  output: { kind: xlsx,     path: ./tmp/phase4_compact_multiaxis.xlsx }
+
+excel:
+  auto_filter: true
+  freeze_header: true
+  header_fill_rgb: DDDDDD
+
+pipeline:
+  - step: expand_compact_multiaxis
+    matrix: feature_matrix
+    output: feature_product_codes
+    row_keys: [feature_id, feature_label]
+    value_columns: [P-100, P-200, P-300]
+    mode: whole_cell_code
+    allowed_from_legend: status_codes
+    group: code_group
+    strip: true
+    drop_empty: true
+
+  - step: expand_compact_multiaxis
+    matrix: feature_token_matrix
+    output: feature_product_tokens
+    row_keys: [feature_id, feature_label]
+    value_columns: [P-100, P-200, P-300]
+    mode: split_tokens
+    delimiter: "-"
+    allowed_from_legend: status_tokens
+    group: token_group
+    strip: true
+    drop_empty: true

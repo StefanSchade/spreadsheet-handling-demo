@@ -1,0 +1,58 @@
+version: demo-phase4
+author: spreadsheet-handling-demo
+sheets:
+  feature_matrix:
+    auto_filter: true
+    freeze_header: true
+    header_fill_rgb: "#D9EAD3"
+  feature_token_matrix:
+    auto_filter: true
+    freeze_header: true
+    header_fill_rgb: "#CFE2F3"
+  feature_product_codes:
+    auto_filter: true
+    freeze_header: true
+    header_fill_rgb: "#FCE5CD"
+  feature_product_tokens:
+    auto_filter: true
+    freeze_header: true
+    header_fill_rgb: "#D9D2E9"
+legend_blocks:
+  status_codes:
+    title: Status Codes
+    placement:
+      sheet: feature_matrix
+      anchor: right_of_table
+      target: feature_matrix
+    entries:
+      - token: E
+        label: User editable field
+        group: input
+      - token: E-R-K
+        label: Editable, reviewed, key field
+        group: input
+      - token: S
+        label: System calculated field
+        group: system
+      - token: R
+        label: Read-only field
+        group: review
+  status_tokens:
+    title: Status Tokens
+    placement:
+      sheet: feature_token_matrix
+      anchor: right_of_table
+      target: feature_token_matrix
+    entries:
+      - token: E
+        label: Editable
+        group: input
+      - token: R
+        label: Reviewed
+        group: review
+      - token: K
+        label: Key field
+        group: key
+      - token: S
+        label: System
+        group: system

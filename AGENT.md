@@ -19,7 +19,7 @@ Minimal operating rules for this demo repository:
   layers or deep abstractions.
 * Avoid destructive history edits, release publication, CI/CD changes, or
   deleting potentially in-progress user work without explicit approval.
-* Treat `tmp/`, `target/`, `.venv/`, generated outputs, and local scratch files
+* Treat `tmp/`, `build/`, `.venv/`, generated outputs, and local scratch files
   as non-source unless the task explicitly includes them.
 * Use Conventional Commits with informative English subjects and a short body
   for non-trivial changes.

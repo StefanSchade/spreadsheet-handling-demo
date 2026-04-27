@@ -28,7 +28,7 @@ package-dir = {"" = "."}
 
 [tool.setuptools.packages.find]
 include = ["plugins*"]
-exclude = ["tmp*", "data*", "target*"]
+exclude = ["tmp*", "data*", "build*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

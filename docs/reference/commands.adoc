@@ -78,6 +78,51 @@ make run PIPELINE=./pipelines/demo_workbook_reimport.yaml \
   OUT_PATH=./tmp/product_business_slice_reimported
 ----
 
+== Phase 4 Compact Multiaxis
+
+Use the local core checkout first:
+
+[source,bash]
+----
+make setup-lib-local
+----
+
+Expand a compact matrix into a sparse relation:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_expand.yaml
+----
+
+Compare sparse and lossless roundtrip modes:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_roundtrip.yaml
+----
+
+Write the workbook as XLSX:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_workbook.yaml
+----
+
+Write the same workbook as ODS:
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_workbook.yaml \
+  OUT_KIND=ods OUT_PATH=./tmp/phase4_compact_multiaxis.ods
+----
+
+Run the Phase 4 demo checks:
+
+[source,bash]
+----
+.venv/bin/pytest tests/test_phase4_compact_multiaxis_demo.py -q
+----
+
 == Generic Demo Flows
 
 Run a custom pipeline:

@@ -22,7 +22,7 @@ Practical summary:
   switch to `../spreadsheet-handling` instead of rebuilding that logic here.
 * Stay inside the workspace repositories and avoid destructive or irreversible
   actions without explicit approval.
-* Treat `.venv/`, `target/`, `tmp/`, generated workbooks, and similar local
+* Treat `.venv/`, `build/`, `tmp/`, generated workbooks, and similar local
   state as non-source unless the task explicitly includes them.
 * Use Conventional Commits with informative subjects; if the change maps to a
   concrete feature ticket, include the FTR ID prominently, preferably as the

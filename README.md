@@ -39,3 +39,16 @@ Run the demo smoke tests:
 ```bash
 .venv/bin/pytest -q
 ```
+
+## Phase 4 local demo flows
+
+These flows intentionally use the local sibling checkout after
+`make setup-lib-local`:
+
+```bash
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_expand.yaml
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_roundtrip.yaml
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_workbook.yaml
+make run PIPELINE=./pipelines/demo_phase4_compact_multiaxis_workbook.yaml \
+  OUT_KIND=ods OUT_PATH=./tmp/phase4_compact_multiaxis.ods
+```

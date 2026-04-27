@@ -1,0 +1,17 @@
+[
+  {
+    "id": "P-100",
+    "label": "Starter / DE",
+    "market_id": "DE"
+  },
+  {
+    "id": "P-200",
+    "label": "Growth / EU",
+    "market_id": "EU"
+  },
+  {
+    "id": "P-300",
+    "label": "Enterprise / US",
+    "market_id": "US"
+  }
+]

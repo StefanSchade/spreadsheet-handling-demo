@@ -1,0 +1,64 @@
+io:
+  input:  { kind: json_dir, path: ./data/phase4_compact_multiaxis }
+  output: { kind: json_dir, path: ./tmp/phase4_compact_multiaxis_roundtrip }
+
+pipeline:
+  - step: expand_compact_multiaxis
+    matrix: feature_matrix
+    output: feature_product_codes_sparse
+    row_keys: [feature_id, feature_label]
+    value_columns: [P-100, P-200, P-300]
+    mode: whole_cell_code
+    allowed_from_legend: status_codes
+    group: code_group
+    strip: true
+    drop_empty: true
+
+  - step: contract_compact_multiaxis
+    relation: feature_product_codes_sparse
+    output: feature_matrix_sparse_roundtrip
+    row_keys: [feature_id, feature_label]
+    mode: whole_cell_code
+    allowed_from_legend: status_codes
+    strip: true
+
+  - step: expand_compact_multiaxis
+    matrix: feature_matrix
+    output: feature_product_codes_lossless
+    row_keys: [feature_id, feature_label]
+    value_columns: [P-100, P-200, P-300]
+    mode: whole_cell_code
+    allowed_from_legend: status_codes
+    group: code_group
+    strip: true
+    drop_empty: false
+
+  - step: contract_compact_multiaxis
+    relation: feature_product_codes_lossless
+    output: feature_matrix_lossless_roundtrip
+    row_keys: [feature_id, feature_label]
+    mode: whole_cell_code
+    allowed_from_legend: status_codes
+    strip: true
+
+  - step: expand_compact_multiaxis
+    matrix: feature_token_matrix
+    output: feature_product_tokens
+    row_keys: [feature_id, feature_label]
+    value_columns: [P-100, P-200, P-300]
+    mode: split_tokens
+    delimiter: "-"
+    allowed_from_legend: status_tokens
+    group: token_group
+    strip: true
+    drop_empty: true
+
+  - step: contract_compact_multiaxis
+    relation: feature_product_tokens
+    output: feature_token_matrix_canonical_roundtrip
+    row_keys: [feature_id, feature_label]
+    mode: split_tokens
+    delimiter: "-"
+    allowed_from_legend: status_tokens
+    canonical_order: [E, R, K, S]
+    strip: true
