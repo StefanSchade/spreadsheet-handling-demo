@@ -39,4 +39,8 @@ include::DEMO-REVEALJS-WALKTHROUGHS-P4A.adoc[]
 
 '''
 
+include::DEMO-VERSIONED-PAGES-PUBLISHING-P4A.adoc[]
+
+'''
+
 include::DEMO-CAPABILITY-SHOWCASES-P4A.adoc[]

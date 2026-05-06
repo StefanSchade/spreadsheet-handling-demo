@@ -1,0 +1,79 @@
+== DEMO-VERSIONED-PAGES-PUBLISHING-P4A -- Publish versioned demo docs and walkthroughs
+
+*Status:* Open
+*Area:* Demo documentation publishing
+
+=== Purpose
+
+Define the demo repository publishing workflow for versioned GitHub Pages
+documentation.
+
+The demo repository should stay cloneable and source-focused. Generated HTML
+for AsciiDoc pages and Reveal.js walkthroughs belongs in a Pages artifact or
+generated publishing branch, not in the normal source branch.
+
+=== Scope
+
+* Add or document a GitHub Actions workflow that builds the demo documentation
+  site.
+* Publish source AsciiDoc docs and generated Reveal.js walkthroughs as one
+  coherent demo site.
+* Support versioned snapshots for beta/demo tags, not only a moving latest
+  copy.
+* Keep `latest` available for the current maintained demo journey.
+* Link every published demo snapshot to the core library version it expects.
+* Keep the public repo front door simple: README -> docs index -> journeys.
+
+=== Preferred Paths
+
+Use stable paths such as:
+
+* `/latest/`
+* `/versions/v0.1.0b6-demo/`
+* `/versions/v0.1.0b7-demo/`
+
+The exact Pages implementation can be either:
+
+* GitHub Pages artifacts built by Actions, or
+* a generated `gh-pages` branch with versioned subdirectories.
+
+In both cases, generated HTML does not belong on the source branch.
+
+=== Inputs
+
+The source-of-truth lives in Git:
+
+* `README.md`
+* `docs/index.adoc`
+* `docs/**/*.adoc`
+* `docs/slides/**/*.adoc`
+* build scripts or workflow definitions
+
+Generated outputs may include:
+
+* static HTML documentation pages
+* Reveal.js slide decks
+* copied static assets
+* an index page linking journeys, capabilities, and versions
+
+=== Non-goals
+
+* Do not create a separate pages repository unless repository policy later
+  requires it.
+* Do not commit generated HTML to the source branch.
+* Do not make Reveal.js decks the only documentation path; normal AsciiDoc
+  docs remain the reference/source form.
+* Do not publish private or consumer-specific data.
+
+=== Acceptance
+
+* The demo repository has an explicit Pages publishing policy.
+* The generated site can expose `latest` and at least one versioned demo path.
+* The site links demo walkthroughs to the core version they were validated
+  against.
+* Generated HTML is ignored or produced only as a CI artifact/publishing branch.
+* README or `docs/index.adoc` can link to the published demo site without
+  ambiguity.
+* The Reveal.js walkthrough FTR can focus on tutorial content rather than
+  owning the full publishing policy.
+

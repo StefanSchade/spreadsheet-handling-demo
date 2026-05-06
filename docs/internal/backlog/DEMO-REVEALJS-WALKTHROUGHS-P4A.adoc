@@ -11,6 +11,9 @@ generated HTML.
 The source should be AsciiDoc so that a walkthrough can be reviewed as text,
 while the published form can be Reveal.js slides.
 
+Publishing policy is owned by `DEMO-VERSIONED-PAGES-PUBLISHING-P4A`. This FTR
+owns the tutorial content shape and local build/preview ergonomics.
+
 === Scope
 
 * Add `docs/slides/` for Reveal.js AsciiDoc sources.
@@ -21,7 +24,7 @@ while the published form can be Reveal.js slides.
   - inspect these sheets/cells
   - re-import or verify this output
 * Add local preview/build notes.
-* Add a GitHub Pages publishing path that builds HTML as an artifact.
+* Keep the slide source compatible with the versioned Pages publishing path.
 
 === Acceptance
 
@@ -30,14 +33,14 @@ while the published form can be Reveal.js slides.
 * README or `docs/index.adoc` can link to the published deck once Pages is set
   up.
 * The deck names match the automated journey/test names.
-* The publishing path supports versioned documentation snapshots for beta/demo
-  releases instead of replacing the only public copy.
+* The deck source can be built by the versioned Pages workflow without manual
+  patching.
 
-=== Pages Decision
+=== Pages Boundary
 
 Preferred path: publish from this repository with GitHub Actions and Pages
-artifacts. A separate `spreadsheet-handling-demo-pages` repository is not
-required unless repository policy later forces separation.
+artifacts. A separate pages repository is not required unless repository policy
+later forces separation.
 
 The source-of-truth stays in Git:
 
@@ -45,13 +48,5 @@ The source-of-truth stays in Git:
 * slide sources: `docs/slides/**/*.adoc`
 * generated HTML: build artifact only
 
-For published HTML, prefer stable versioned paths:
-
-* `/latest/` for the current published demo state
-* `/versions/v0.1.0b5-demo/`
-* `/versions/v0.1.0b6-demo/`
-
-GitHub Pages can serve these paths from one site. The implementation can either
-build the complete site artifact from known tags, or maintain a generated
-`gh-pages` branch with versioned subdirectories. In both cases, generated HTML
-does not belong on `main`.
+Versioned public paths and release/tag policy are specified in
+`DEMO-VERSIONED-PAGES-PUBLISHING-P4A`.
