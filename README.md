@@ -40,6 +40,15 @@ Run the demo smoke tests:
 .venv/bin/pytest -q
 ```
 
+## Documentation
+
+Start with `docs/index.adoc` for the user-facing walkthroughs and capability
+overview.
+
+Maintainer coordination lives under `docs/internal/`. New users can ignore that
+directory; it exists only to keep demo integration work aligned with the main
+library.
+
 ## Phase 4 local demo flows
 
 These flows intentionally use the local sibling checkout after

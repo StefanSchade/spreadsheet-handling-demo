@@ -1,0 +1,29 @@
+== DEMO-ROUNDTRIP-INTEGRATION-HARNESS-P4A -- Curate automated demo trips
+
+*Status:* Open
+*Area:* Demo verification
+
+=== Purpose
+
+Turn the important demo journeys into repeatable integration checks. The tests
+should prove that the demo still works after the main library evolves.
+
+=== Scope
+
+Define a small maintained suite of roundtrip trips, for example:
+
+* product business slice: JSON -> XLSX -> JSON
+* validation/list walkthrough: generated workbook has expected validations
+* helper/lookup enrichment: helper columns are present and stable
+* compact multiaxis: expansion, sparse/lossless roundtrip, token ordering
+* lifecycle workbook view: intermediate frames remain in data but are omitted
+  from the editable workbook only through explicit view metadata
+
+=== Acceptance
+
+* A single command runs the maintained demo integration suite.
+* Each maintained trip writes output to `tmp/` or `build/`.
+* Stable JSON outputs are asserted where practical.
+* Workbook-facing expectations are checked with small targeted assertions.
+* The tests and walkthroughs refer to the same named journeys.
+

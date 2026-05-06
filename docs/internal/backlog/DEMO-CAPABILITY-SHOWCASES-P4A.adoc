@@ -1,0 +1,29 @@
+== DEMO-CAPABILITY-SHOWCASES-P4A -- Align showcased capabilities with the current library
+
+*Status:* Open
+*Area:* Demo content curation
+
+=== Purpose
+
+Refresh the demo so it showcases the capabilities that now exist in the main
+library, without overwhelming a first-time user.
+
+=== Candidate Journeys
+
+* First workbook roundtrip
+* Validation lists and visible codebooks
+* Lookup/FK helper enrichment
+* Compact multiaxis and sparse crosstable transforms
+* Lifecycle-driven editable workbook view
+* Structured YAML writer, if the use case is clear enough for demo users
+
+=== Acceptance
+
+* `docs/capabilities/demo_feature_matrix.adoc` maps each maintained journey to
+  pipeline, fixture data, output artifact, test, and walkthrough.
+* Obsolete or overlapping demo flows are either retired or clearly marked as
+  secondary.
+* New demos prefer existing data where possible and avoid fixture sprawl.
+* Each journey explains the user-visible outcome, not just the internal step
+  names.
+

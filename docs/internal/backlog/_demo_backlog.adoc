@@ -1,0 +1,42 @@
+= Demo Integration Backlog
+
+This backlog tracks integration work for the demo repository.
+
+It is intentionally smaller and lighter than the main repository FTR backlog.
+The goal is not to document every implementation detail. The goal is to keep
+the demo useful as a cloneable starting point while still coordinating the
+growing set of showcased capabilities.
+
+== Principles
+
+* Keep the public repo front door simple.
+* Prefer user journeys over feature-by-feature ceremony.
+* Every important journey should eventually have:
+  - a checked-in pipeline/config
+  - a small fixture dataset
+  - an automated verification path
+  - a walkthrough a new user can follow
+* Generated presentation output is a build artifact, not source.
+
+== Dependency Note
+
+The next larger demo integration pass follows the `ba-config` consumer pass in
+the main repository. If that real usage path exposes generic library gaps, they
+should be fixed or turned into main-repo FTRs before the demo walkthroughs are
+polished for the beta.
+
+== Current Execution Order
+
+include::DEMO-SHOWCASE-STRUCTURE-P4A.adoc[]
+
+'''
+
+include::DEMO-ROUNDTRIP-INTEGRATION-HARNESS-P4A.adoc[]
+
+'''
+
+include::DEMO-REVEALJS-WALKTHROUGHS-P4A.adoc[]
+
+'''
+
+include::DEMO-CAPABILITY-SHOWCASES-P4A.adoc[]

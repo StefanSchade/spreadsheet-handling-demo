@@ -1,0 +1,26 @@
+== DEMO-SHOWCASE-STRUCTURE-P4A -- Make the demo repository navigable
+
+*Status:* Open
+*Area:* Demo documentation and repository shape
+
+=== Purpose
+
+Give a new user a clear first path through the demo repository without turning
+the repo into an internal planning archive.
+
+=== Scope
+
+* Remove temporary note files that are not part of the public demo surface.
+* Make `README.md` explain where a user starts.
+* Keep `docs/index.adoc` as the main documentation entry point.
+* Explain `docs/internal/` as maintainer-only context.
+* Keep the public docs organized around user journeys.
+
+=== Acceptance
+
+* No loose scratch notes remain in `pipelines/`.
+* README points to the user-facing docs and makes the maintained run path clear.
+* `docs/internal/README.adoc` explains why the demo backlog exists and why new
+  users can ignore it.
+* The demo backlog has no more than a handful of open journey-level items.
+

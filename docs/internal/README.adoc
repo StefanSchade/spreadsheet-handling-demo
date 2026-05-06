@@ -1,0 +1,29 @@
+= Demo Maintainer Notes
+
+This directory is for maintaining the demo repository itself.
+
+New users should start at the repository `README.md` and `docs/index.adoc`.
+The material here is coordination context for keeping this demo aligned with
+the main `spreadsheet-handling` repository.
+
+== Backlog Shape
+
+The demo backlog uses `DEMO-*` ids. These are lightweight integration tickets,
+not library feature tickets. They exist because the demo now has to coordinate
+three things at once:
+
+* curated data and pipelines
+* automated roundtrip/integration checks
+* user-facing walkthrough documentation
+
+The backlog should stay small. Prefer a few user-journey tickets over one
+ticket per library feature.
+
+== Repository Hygiene
+
+* Generated HTML must not be committed.
+* Reveal.js or other published walkthrough output should be built as artifacts.
+* User-facing docs should stay in `docs/`, while internal planning stays under
+  `docs/internal/`.
+* A demo journey should ideally have both an automated test and a walkthrough.
+
