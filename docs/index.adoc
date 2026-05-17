@@ -37,3 +37,12 @@ demo repository.
 
 * Command reference:
   xref:reference/commands.adoc[Commands]
+
+== Optional secondary trail
+
+The product walkthroughs above are the primary maintained beta journey. The
+following is an optional, clearly secondary trail bounded to its first slice
+(characters/species FK helper; no matrix, no reimport):
+
+* Storyforge characters slice:
+  xref:walkthroughs/storyforge_characters_slice.adoc[Storyforge Characters Slice]

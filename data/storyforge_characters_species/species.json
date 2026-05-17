@@ -1,0 +1,5 @@
+[
+  { "id": "S-emberfox", "name": "Emberfox", "habitat": "volcanic ridges" },
+  { "id": "S-glasswing", "name": "Glasswing Moth-Drake", "habitat": "crystal caves" },
+  { "id": "S-tideling", "name": "Tideling", "habitat": "tidal marshes" }
+]

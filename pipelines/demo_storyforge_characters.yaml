@@ -1,0 +1,33 @@
+# Storyforge -- optional, secondary tutorial trail (first slice only).
+#
+# Scope: characters/species FK-helper enrichment -> readable workbook.
+# Deliberately NO matrix, NO reimport, NO lore mechanics. Later slices stay
+# future per the core concept note:
+#   spreadsheet-handling/docs/internal_guide/concepts/by_use_case/
+#   worldbuilding_continuity_workbook_roundtrip.adoc  (Demo Trail Scope)
+io:
+  input:  { kind: json_dir, path: ./data/storyforge_characters_species }
+  output: { kind: xlsx,     path: ./tmp/storyforge_characters.xlsx }
+
+pipeline:
+  - step: validate
+    mode_duplicate_ids: warn
+    mode_missing_fk: warn
+    defaults:
+      id_field: id
+      label_field: name
+      detect_fk: true
+      helper_prefix: "_"
+
+  - step: add_fk_helpers
+    defaults:
+      id_field: id
+      label_field: name
+      detect_fk: true
+      helper_prefix: "_"
+
+  - step: reorder_fk_helpers
+    helper_prefix: "_"
+
+  - step: flatten_headers
+    mode: level0

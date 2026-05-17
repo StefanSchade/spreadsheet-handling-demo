@@ -1,0 +1,49 @@
+= Storyforge Characters Slice (optional secondary trail)
+
+[NOTE]
+====
+This is an *optional, secondary* tutorial trail. The primary maintained beta
+journey is the ACME / product business slice. Storyforge exists only to show
+that the same generic mechanics work on a non-technical, obviously fictional
+domain. It is deliberately bounded to a *first slice*.
+====
+
+== Scope
+
+* In scope: a `characters` -> `species` foreign-key relation, FK helper
+  enrichment, and a readable workbook projection.
+* Explicitly *not* in this slice: no matrix/crosstable, no edit-and-reimport
+  roundtrip, no timeline, no lore/continuity mechanics, no narrative analysis.
+
+Later Storyforge slices remain future and are described only as future
+patterns in the core concept note
+`spreadsheet-handling/docs/internal_guide/concepts/by_use_case/worldbuilding_continuity_workbook_roundtrip.adoc`
+(see its `Demo Trail Scope`). They must not be implemented here.
+
+== Theme
+
+A small, invented adventure universe (no real-world IP):
+
+* `species` -- e.g. Emberfox, Glasswing Moth-Drake, Tideling
+* `characters` -- each references a species via `id_(species)`
+
+== Artifacts
+
+* Data: `data/storyforge_characters_species/species.json`,
+  `data/storyforge_characters_species/characters.json`
+* Pipeline: `pipelines/demo_storyforge_characters.yaml`
+
+== Run
+
+[source,bash]
+----
+make run PIPELINE=./pipelines/demo_storyforge_characters.yaml
+----
+
+* Output: `./tmp/storyforge_characters.xlsx`
+* Observe: on the `characters` sheet, the FK helper column `_species_name`
+  appears next to `id_(species)` (e.g. `S-emberfox` -> `Emberfox`).
+* Idea: normalized story-world data becomes an author-readable workbook using
+  exactly the same canonical steps as the product journey
+  (`validate`, `add_fk_helpers`, `reorder_fk_helpers`, `flatten_headers`) --
+  storytelling concepts stay out of the core library.

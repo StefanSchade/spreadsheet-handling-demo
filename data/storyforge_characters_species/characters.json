@@ -1,0 +1,7 @@
+[
+  { "id": "C-001", "name": "Captain Vex", "id_(species)": "S-emberfox", "role": "protagonist" },
+  { "id": "C-002", "name": "Mara Quill", "id_(species)": "S-glasswing", "role": "navigator" },
+  { "id": "C-003", "name": "Old Brine", "id_(species)": "S-tideling", "role": "mentor" },
+  { "id": "C-004", "name": "Sable", "id_(species)": "S-emberfox", "role": "antagonist" },
+  { "id": "C-005", "name": "Pip", "id_(species)": "S-tideling", "role": "comic relief" }
+]
