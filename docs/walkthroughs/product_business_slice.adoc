@@ -117,7 +117,8 @@ The pipeline combines five ideas in one small flow:
 * `apply_overrides` injects workbook and sheet rendering options
 * `validate` checks duplicate IDs and missing FK targets
 * `add_validations` adds Excel list validations
-* `apply_fks` materializes helper columns
+* `add_fk_helpers` materializes helper columns (and `reorder_fk_helpers`
+  places them next to their FK column)
 * `flatten_headers` keeps re-imported JSON readable on the way back
 
 The relevant shape is:
@@ -145,12 +146,15 @@ pipeline:
           type: in_list
           values: [active, pilot, retired]
 
-  - step: apply_fks
+  - step: add_fk_helpers
     defaults:
       id_field: id
       label_field: name
       detect_fk: true
       helper_prefix: "_"
+
+  - step: reorder_fk_helpers
+    helper_prefix: "_"
 ----
 
 == What To Look For In Excel
