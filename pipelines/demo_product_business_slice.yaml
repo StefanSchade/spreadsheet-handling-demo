@@ -38,14 +38,14 @@ pipeline:
           type: in_list
           values: [DE, CH, AT]
 
-  - step: apply_fks
+  - step: add_fk_helpers
     defaults:
       id_field: id
       label_field: name
       detect_fk: true
       helper_prefix: "_"
 
-  - step: reorder_helpers
+  - step: reorder_fk_helpers
     helper_prefix: "_"
 
   - step: flatten_headers
