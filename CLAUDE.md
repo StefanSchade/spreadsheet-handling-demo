@@ -5,10 +5,10 @@ This file is intentionally brief.
 While this repository is still in beta, the canonical development guidance
 lives in the neighboring core repository when it is available:
 
-* `../spreadsheet-handling/CLAUDE.md`
-* `../spreadsheet-handling/AGENT.md`
-* `../spreadsheet-handling/docs/internal_guide/ai_policy/`
-* `../spreadsheet-handling/docs/internal_guide/dev_man/`
+* `../core/CLAUDE.md`
+* `../core/AGENT.md`
+* `../core/docs/internal_guide/ai_policy/`
+* `../core/docs/internal_guide/dev_man/`
 
 If that neighboring repository is not present, use the fallback rules below.
 

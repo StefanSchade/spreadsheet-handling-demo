@@ -1,0 +1,8 @@
+[
+  { "id": "E001", "name": "Alice Fontaine",  "department": "Engineering", "location": "Berlin"  },
+  { "id": "E002", "name": "Bob Hartmann",    "department": "Sales",       "location": "Munich"  },
+  { "id": "E003", "name": "Carol Zhang",     "department": "Engineering", "location": "Berlin"  },
+  { "id": "E004", "name": "David Müller",    "department": "HR",          "location": "Hamburg" },
+  { "id": "E005", "name": "Eva Richter",     "department": "Sales",       "location": "Munich"  },
+  { "id": "E006", "name": "Frank Bauer",     "department": "Finance",     "location": "Berlin"  }
+]

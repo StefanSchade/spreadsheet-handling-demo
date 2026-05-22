@@ -3,7 +3,7 @@
 # =========================
 
 CONFIG := sheets.yaml
-LIB_SRC ?= ../spreadsheet-handling
+LIB_SRC ?= ../core
 LIB_PYPI_VERSION ?= 0.1.0b5
 
 # =========================
@@ -157,6 +157,10 @@ snapshot: ## Optional: repo snapshot (script is not part of this demo repository
 	  echo "⚠️  not committed to this repo since non-essential for the demo"; \
 	  echo "⚠️  manually copy if needed from: https://github.com/StefanSchade/spreadsheet-handling/tree/main/tools"; \
 	fi
+
+.PHONY: render-slides
+render-slides: ## Render AsciiDoc walkthroughs to Reveal.js HTML under build/slides/
+	@bash scripts/render_slides.sh
 
 .PHONY: clean
 clean: ## Remove tmp and target

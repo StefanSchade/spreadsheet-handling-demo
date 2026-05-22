@@ -1,0 +1,10 @@
+io:
+  input:  { kind: json_dir, path: ./data/acme_plain }
+  output: { kind: xlsx,     path: ./tmp/acme_01_plain.xlsx }
+
+excel:
+  auto_filter: true
+  freeze_header: true
+  header_fill_rgb: DDDDDD
+
+pipeline: []

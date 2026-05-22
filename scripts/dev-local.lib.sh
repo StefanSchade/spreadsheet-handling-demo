@@ -14,7 +14,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 VENV="$ROOT/.venv"
 
 # Where the local lib lives (adjust if needed)
-LIB_SRC="${LIB_SRC:-$ROOT/../spreadsheet-handling}"
+LIB_SRC="${LIB_SRC:-$ROOT/../core}"
 LIB_INIT="$LIB_SRC/src/spreadsheet_handling/__init__.py"
 
 if [[ ! -f "$LIB_INIT" ]]; then

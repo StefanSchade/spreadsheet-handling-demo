@@ -4,7 +4,7 @@ This file is intentionally brief.
 
 Primary guidance:
 
-* If `../spreadsheet-handling` exists, treat its `CLAUDE.md`, `AGENT.md`, and
+* If `../core` exists, treat its `CLAUDE.md`, `AGENT.md`, and
   internal guide as the canonical source of truth.
 * If that neighboring repository is absent, operate with the fallback rules in
   this file.
@@ -25,5 +25,5 @@ Minimal operating rules for this demo repository:
   for non-trivial changes.
 
 If the task appears to require core architecture work, continue in
-`../spreadsheet-handling` and leave only the demo-facing integration slice
+`../core` and leave only the demo-facing integration slice
 here.

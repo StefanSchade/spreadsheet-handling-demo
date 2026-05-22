@@ -1,0 +1,5 @@
+io:
+  input:  { kind: xlsx,     path: ./tmp/acme_01_plain.xlsx }
+  output: { kind: json_dir, path: ./tmp/acme_01_roundtrip }
+
+pipeline: []
