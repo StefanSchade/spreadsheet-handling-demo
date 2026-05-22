@@ -19,7 +19,7 @@ Practical summary:
 * Prefer adapting demo pipelines, sample data, walkthroughs, and focused demo
   tests to the current use case.
 * If a task clearly belongs in the core library or its architecture docs,
-  switch to `../spreadsheet-handling` instead of rebuilding that logic here.
+  switch to `../core` instead of rebuilding that logic here.
 * Stay inside the workspace repositories and avoid destructive or irreversible
   actions without explicit approval.
 * Treat `.venv/`, `target/`, `tmp/`, generated workbooks, and similar local

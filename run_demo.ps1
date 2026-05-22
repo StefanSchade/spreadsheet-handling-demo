@@ -1,6 +1,6 @@
 # run_demo.ps1 -- ACME demo launcher for Windows
 #
-# Usage:  .\run_demo.ps1 <pipeline.yaml>
+# Usage:  .\run_demo.ps1 <pipeline.yaml> [extra flags]
 # Flag:   -RefreshVenv  force venv recreate
 #
 # Examples:
@@ -13,16 +13,20 @@ param(
     [Parameter(Position = 0)]
     [string] $Pipeline,
 
-    [switch] $RefreshVenv
+    [switch] $RefreshVenv,
+
+    [Parameter(ValueFromRemainingArguments = $true)]
+    [string[]] $Extra
 )
 
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+Set-Location $ScriptDir
 $Venv      = Join-Path $ScriptDir ".venv"
 $Python    = Join-Path $Venv "Scripts\python.exe"
 $Pip       = Join-Path $Venv "Scripts\pip.exe"
 
 if (-not $Pipeline) {
-    Write-Host "Usage: .\run_demo.ps1 [pipeline.yaml] [-RefreshVenv]"
+    Write-Host "Usage: .\run_demo.ps1 [pipeline.yaml] [-RefreshVenv] [extra flags]"
     Write-Host ""
     Write-Host "  .\run_demo.ps1 pipelines\acme_01_plain_forward.yaml"
     Write-Host "  .\run_demo.ps1 pipelines\acme_01_plain_reverse.yaml"
@@ -33,8 +37,8 @@ if (-not $Pipeline) {
 if ($RefreshVenv -or -not (Test-Path $Python)) {
     Write-Host "Setting up .venv (use -RefreshVenv to force update) ..."
     python -m venv $Venv
-    & $Pip install --quiet -e "$ScriptDir\.[dev]"
+    & $Pip install -e $ScriptDir
     Write-Host "Done."
 }
 
-& $Python -m spreadsheet_handling.cli.apps.run --config $Pipeline
+& $Python -m spreadsheet_handling.cli.apps.run --config $Pipeline @Extra

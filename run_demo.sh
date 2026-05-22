@@ -11,6 +11,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
 VENV="$SCRIPT_DIR/.venv"
 
 REFRESH=0
@@ -31,7 +32,7 @@ fi
 if [[ "$REFRESH" -eq 1 ]] || [[ ! -x "$VENV/bin/python" ]]; then
   echo "Setting up .venv (run with --refresh-venv to force update) ..."
   python3 -m venv "$VENV"
-  "$VENV/bin/pip" install --quiet -e "$SCRIPT_DIR/.[dev]"
+  "$VENV/bin/pip" install -e "$SCRIPT_DIR"
   echo "Done."
 fi
 

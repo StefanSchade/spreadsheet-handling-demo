@@ -23,6 +23,11 @@ Minimal operating rules for this demo repository:
   as non-source unless the task explicitly includes them.
 * Use Conventional Commits with informative English subjects and a short body
   for non-trivial changes.
+* When applying an architectural/code review for an FTR implementation, record
+  the review under `docs/backlog/reviews/FTR-<ID>_review.adoc` and update its
+  disposition before committing the follow-up. Trivial edits do not need a
+  review note. See `../core/docs/ai_info/git_and_workflow.adoc` for the canonical
+  format.
 
 If the task appears to require core architecture work, continue in
 `../core` and leave only the demo-facing integration slice
