@@ -1,3 +1,26 @@
+# Demo CI intent (FTR-DEMO-CI-SMOKE-AND-LEGACY-TARGET-CLEANUP-P5):
+#
+# This workflow is a consumer-side integration smoke for the pinned
+# `spreadsheet-handling` release declared in `pyproject.toml`. It is NOT
+# the authoritative correctness test surface for the core library; that
+# lives in the core repository's own CI.
+#
+# Three intentional layers, each isolating a different failure mode:
+#   1. Install         - the demo package and its pinned core dependency
+#                        install cleanly into a fresh Python 3.11 venv.
+#   2. Pytest          - the curated demo journeys (roundtrip, multi-header,
+#                        named ranges, transforms, validation) run against
+#                        the installed core. This doubles as maintained
+#                        pipeline smoke; no separate `make run` step is
+#                        required.
+#   3. CLI smoke       - the public `sheets-run` entrypoint is present and
+#                        responds to `--help`, catching packaging drift even
+#                        when no demo journey exercises it directly.
+#
+# Legacy `sheets-pack` / `sheets-unpack` smoke and `sheets.yaml`-based
+# wrappers were removed: those entrypoints and that config no longer exist
+# on the supported core surface (see the FTR for the v0.1.0b6 stabilization
+# history).
 name: CI
 
 on:
@@ -17,19 +40,18 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Create venv & install (pyproject)
+      - name: Install demo + pinned core (layer 1 - install)
         run: |
           python -m venv .venv
           .venv/bin/python -m pip install --upgrade pip
           .venv/bin/python -m pip install -e '.[dev]'
 
-      - name: Unit tests
+      - name: Demo journeys via pytest (layer 2 - maintained pipeline smoke)
         run: |
           .venv/bin/python -m pytest
 
-      - name: Smoke test installed core CLI
+      - name: Public CLI availability (layer 3 - entrypoint smoke)
         run: |
           .venv/bin/python -m pip show spreadsheet-handling
           test -x .venv/bin/sheets-run
           .venv/bin/sheets-run --help >/dev/null
-          

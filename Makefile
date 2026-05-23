@@ -2,7 +2,6 @@
 # User Config
 # =========================
 
-CONFIG := sheets.yaml
 LIB_SRC ?= ../core
 LIB_PYPI_VERSION ?= 0.1.0b6
 
@@ -19,13 +18,8 @@ PYTHON       := $(VENV)/bin/python
 # Paths and Naming
 # =========================
 ROOT         ?= $(CURDIR)/
-DATA_DIR     ?= ./data
 TMP_DIR      ?= ./tmp
 BUILD_DIR    ?= ./target
-SHA          ?= $(shell git rev-parse --short HEAD)
-
-# All top-level data sets (each dir under ./data becomes one workbook)
-PACK_SETS    := $(shell find $(DATA_DIR) -maxdepth 1 -mindepth 1 -type d -printf "%f\n")
 
 # =========================
 # Stamps (avoid repeated installs on WSL)
@@ -38,8 +32,6 @@ STAMP_VENV   := $(STAMP_DIR)/venv.ok
 # CLI bindings (venv executables)
 # =========================
 RUN_CMD      := $(VENV)/bin/sheets-run
-PACK_CMD     := $(VENV)/bin/sheets-pack
-UNPACK_CMD   := $(VENV)/bin/sheets-unpack
 
 # =========================
 # Environment & dependencies
@@ -68,7 +60,7 @@ reset-deps: ## Remove venv and stamps (forces a fresh setup next time)
 deps: setup
 
 # =========================
-# Targets (no implicit deps -> quick roundtrip)
+# Targets
 # =========================
 
 .PHONY: run
@@ -87,43 +79,6 @@ run: ## Execute a checked-in run config / pipeline (preferred demo entry point)
 	  $(if $(IN_PATH),--in-path '$(IN_PATH)') \
 	  $(if $(OUT_KIND),--out-kind '$(OUT_KIND)') \
 	  $(if $(OUT_PATH),--out-path '$(OUT_PATH)')
-
-
-.PHONY: pack
-pack: ## Legacy JSON -> XLSX shim for all datasets (prefer `make run PIPELINE=...`)
-	@mkdir -p "$(TMP_DIR)"
-	@for d in $(PACK_SETS); do \
-		out="$(TMP_DIR)/$${d}-$(SHA).xlsx"; \
-		echo "Packing $(DATA_DIR)/$$d -> $$out"; \
-		$(PACK_CMD) "$(DATA_DIR)/$$d" -o "$$out"; \
-	done
-	@echo "OK: workbooks in $(TMP_DIR)"
-
-.PHONY: unpack
-unpack: ## Legacy XLSX -> JSON shim (prefer `make run` with demo_workbook_reimport.yaml)
-	@UNPACK_CMD='$(UNPACK_CMD)' bash scripts/unpack_current_sha.sh "$(TMP_DIR)" "$(DATA_DIR)" "$(SHA)"
-
-.PHONY: roundtrip
-roundtrip: pack unpack ## Legacy convenience alias (prefer explicit run-based flows)
-
-.PHONY: verify
-verify: ## Run verification pipeline via sheets-run (json_dir -> xlsx)
-	$(RUN_CMD) \
-	  --config "$(CONFIG)" \
-	  --pipeline verify \
-	  --in-kind json_dir  --in-path "$(DATA_DIR)" \
-	  --out-kind xlsx     --out-path "$(TMP_DIR)/_verify-$(SHA).xlsx"
-	@echo "OK: verification"
-
-.PHONY: extract
-extract: ## Run extract pipeline via sheets-run (json_dir -> json_dir)
-	@mkdir -p "$(BUILD_DIR)"
-	$(RUN_CMD) \
-	  --config "$(CONFIG)" \
-	  --pipeline extract \
-	  --in-kind json_dir  --in-path "$(DATA_DIR)" \
-	  --out-kind json_dir --out-path "$(BUILD_DIR)"
-	@echo "OK: artifacts in $(BUILD_DIR)"
 
 .PHONY: lint-json
 lint-json:

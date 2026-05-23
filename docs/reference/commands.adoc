@@ -87,25 +87,9 @@ Run a custom pipeline:
 make run PIPELINE=./pipelines/demo_foo.yaml
 ----
 
-Legacy compatibility shims:
-
-[source,bash]
-----
-make pack
-make unpack
-make roundtrip
-----
-
-Verification flow:
-
-[source,bash]
-----
-make verify
-----
-
-Extraction flow:
-
-[source,bash]
-----
-make extract
-----
+All maintained demo flows go through `make run PIPELINE=...` against a
+checked-in pipeline file under `pipelines/`. The earlier `make pack`,
+`make unpack`, `make roundtrip`, `make verify`, and `make extract`
+convenience targets were removed: they depended on entrypoints
+(`sheets-pack`, `sheets-unpack`) and a top-level `sheets.yaml` that no
+longer exist in the supported core surface.

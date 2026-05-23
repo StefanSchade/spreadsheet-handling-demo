@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Use local spreadsheet-handling source (sibling checkout) for Make targets.
+# Wraps `make` so the venv finds the sibling core source via PYTHONPATH,
+# without requiring a separate `pip install -e ../core` step.
 # Usage examples:
-#   scripts/dev-local.lib.sh pack
-#   scripts/dev-local.lib.sh unpack
 #   scripts/dev-local.lib.sh run PIPELINE=./pipelines/demo_extraction.yaml
 #   scripts/dev-local.lib.sh which-lib
-#   scripts/dev-local.lib.sh make pack  # pass through to make with full control
+#   scripts/dev-local.lib.sh make run PIPELINE=./pipelines/demo_extraction.yaml
 
 set -euo pipefail
 
@@ -32,11 +32,6 @@ fi
 # Build PYTHONPATH that points to demo plugins and the local lib first
 # (preserve existing PYTHONPATH if present)
 export PYTHONPATH="$ROOT/plugins:$LIB_SRC/src${PYTHONPATH:+:$PYTHONPATH}"
-
-# Point our CLI commands to the module entrypoints (bypass console scripts)
-export PACK_CMD="$VENV/bin/python -m spreadsheet_handling.cli.apps.sheets_pack"
-export UNPACK_CMD="$VENV/bin/python -m spreadsheet_handling.cli.apps.sheets_unpack"
-export RUN_CMD="$VENV/bin/python -m spreadsheet_handling.cli.apps.run"
 
 # Helper: show which lib is used
 if [[ "${1:-}" == "which-lib" ]]; then
