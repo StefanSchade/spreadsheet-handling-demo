@@ -1,0 +1,175 @@
+name: publish-docs
+
+on:
+  push:
+    tags: [ 'v*' ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # ensure tags are present
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Create venv & install (pyproject)
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install -e '.[dev]'
+      - name: Unit tests
+        run: .venv/bin/python -m pytest
+
+  publish-docs:
+    needs: test
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    # Same concurrency group as the core publish-docs job so that demo and
+    # core tag pushes serialize on the shared `spreadsheet-handling-pages`
+    # repository. cancel-in-progress: false because each tag must get its
+    # own `versions/<tag>/demo/slides/` snapshot.
+    concurrency:
+      group: pages-publish
+      cancel-in-progress: false
+    permissions:
+      contents: read
+    env:
+      # Pinned vendored reveal.js bundle that already exists in the Pages
+      # repo under /assets/reveal.js@<version>/. Absolute path lets the same
+      # rendered slides work from both /versions/<tag>/demo/slides/ and
+      # /latest/demo/slides/ without recomputing relative depth.
+      REVEALJS_VERSION: '4.6.1'
+      REVEALJS_DIR: '/spreadsheet-handling-pages/assets/reveal.js@4.6.1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0          # tags present for PEP 440 latest-tag guard
+      - name: Install slide rendering stack
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y asciidoctor rsync ruby
+          # asciidoctor-revealjs ships as a Ruby gem
+          sudo gem install --no-document asciidoctor-revealjs -v '5.2.0'
+          python3 -m pip install --upgrade pip
+          python3 -m pip install packaging
+      - name: Render Reveal.js slide decks
+        run: |
+          set -euo pipefail
+          REVEALJS_DIR="${REVEALJS_DIR}" scripts/render_slides.sh
+          ls -la build/slides
+      - name: Configure Pages deploy SSH key
+        env:
+          DOCS_DEPLOY_KEY: ${{ secrets.DOCS_DEPLOY_KEY }}
+        # Same shape as core `publish-docs`:
+        #  * Deploy key writes only to `spreadsheet-handling-pages`.
+        #  * Private key is consumed via env in this step only; not exported.
+        #  * GitHub SSH host keys are pinned inline (no trust-on-first-use).
+        run: |
+          set -euo pipefail
+          test -n "$DOCS_DEPLOY_KEY"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$DOCS_DEPLOY_KEY" > ~/.ssh/docs_deploy_key
+          chmod 600 ~/.ssh/docs_deploy_key
+          cat >> ~/.ssh/known_hosts <<'EOF'
+          github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl
+          github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAAAhAo1xsasjMU+ahPTSPnAGfvIQz1G1ujz8aPaELLJzMM6N
+          github.com ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCj7ndNxQowgcQnjshcLrqPEiiphnt+VTTvDP6mHBL9j1aNUkY4Ue1gvwnGLVlOhGeYrnZaMgRK6+PKCUXaDbC7qtbW8gIkhL7aGCsOr/C56SJMy/BCZfxd1nWzAOxSDPgVsmerOBYfNqltV9/hWCqBywINIR+5dIg6JTJ72pcEpEjcYgXkE2YEFXV1JHnsKgbLWNlhScqb2UmyRkQyytRLtL+38TGxkxCflmO+5Z8CSSNY7GidjMIZ7Q4zMjA2n1nGrlTDkzwDCsw+wqFPGQA179cnfGWOWRVruj16z6XyvxvjJwbz0wQZ75XK5tKSb7FNyeIEs4TT4jk+S4dhPeAUC5y+bDYirYgM4GC7uEnztnZyaVWQ7B381AK4Qdrwt51ZqExKbQpTUNn+EjqoTwvqNj4kqx5QUCI0ThS/YkOxJCXmPUWZbhjpCg56i+2aB6CmK2JGhn57K5mj0MNdBXA4/WnwH6XoPWJzK5Nyu2zB3nAZp+S5hpQs+p1vN1/wsjk=
+          EOF
+          chmod 600 ~/.ssh/known_hosts
+      - name: Publish slide decks to Pages repository
+        env:
+          GIT_SSH_COMMAND: ssh -i ~/.ssh/docs_deploy_key -o IdentitiesOnly=yes -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=yes
+        run: |
+          set -euo pipefail
+
+          slides_out="$PWD/build/slides"
+          pages_repo="$PWD/build/pages-repo"
+          version_path="versions/${GITHUB_REF_NAME}"
+
+          # Demo tags may carry the `-demo` suffix (e.g. `v0.1.0b6-demo`).
+          # Strip it for PEP 440 comparison against canonical core/demo tags.
+          # If the suffix is not present, the original tag is used as-is.
+          normalized_tag="${GITHUB_REF_NAME%-demo}"
+
+          # PEP 440 latest-tag guard. Compare both bare and demo-suffixed
+          # tags by stripping the suffix; demo tags shadow their matching
+          # core release version.
+          latest_tag="$(python3 - <<PY
+          import subprocess
+          from packaging.version import Version, InvalidVersion
+
+          this_norm = "${normalized_tag}"
+          out = subprocess.check_output(["git", "tag", "-l", "v*"], text=True)
+          parsed = []
+          for tag in out.split():
+              norm = tag[:-5] if tag.endswith("-demo") else tag
+              try:
+                  parsed.append((Version(norm[1:]), tag))
+              except InvalidVersion:
+                  continue
+          if parsed:
+              parsed.sort(key=lambda item: item[0])
+              print(parsed[-1][1])
+          PY
+          )"
+          echo "Newest PEP 440 tag (demo perspective): ${latest_tag:-<none>}"
+
+          git clone git@github.com:StefanSchade/spreadsheet-handling-pages.git "$pages_repo"
+
+          # Sanity-check the vendored reveal.js bundle exists in the Pages
+          # repo. We do not vendor it from this workflow; a one-time bootstrap
+          # commit on the Pages repo installs assets/reveal.js@<version>/.
+          if [ ! -d "$pages_repo/assets/reveal.js@${REVEALJS_VERSION}" ]; then
+            echo "Vendored reveal.js@${REVEALJS_VERSION} not found in Pages repo."
+            echo "Bootstrap the Pages repo with assets/reveal.js@${REVEALJS_VERSION}/ before tagging."
+            exit 1
+          fi
+
+          # Replace only this publisher's owned subtree. Never delete or
+          # rsync-delete shared roots, the core publisher's subtree, or
+          # /assets/.
+          rm -rf "$pages_repo/$version_path/demo/slides"
+          mkdir -p "$pages_repo/$version_path/demo/slides"
+          rsync -a "$slides_out/" "$pages_repo/$version_path/demo/slides/"
+
+          touch "$pages_repo/.nojekyll"
+
+          if [ -n "$latest_tag" ] && [ "$GITHUB_REF_NAME" = "$latest_tag" ]; then
+            rm -rf "$pages_repo/latest/demo/slides"
+            mkdir -p "$pages_repo/latest/demo/slides"
+            rsync -a "$slides_out/" "$pages_repo/latest/demo/slides/"
+            git -C "$pages_repo" add latest/demo/slides
+          else
+            echo "Skipping latest/demo/slides update: ${GITHUB_REF_NAME} is not newest tag (${latest_tag:-<none>})."
+          fi
+
+          git -C "$pages_repo" config user.name "github-actions[bot]"
+          git -C "$pages_repo" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$pages_repo" add .nojekyll "$version_path/demo/slides"
+
+          if git -C "$pages_repo" diff --cached --quiet; then
+            echo "No slide changes to publish."
+            exit 0
+          fi
+
+          git -C "$pages_repo" commit -m "docs: publish ${GITHUB_REF_NAME} demo slides"
+
+          # Push retry with rebase. Job-level concurrency normally serializes
+          # publishes against the same Pages repo, but a manual edit or a
+          # parallel core publish committing between our clone and push can
+          # still produce non-fast-forward. Rebase the single docs commit
+          # onto the new tip and retry up to 5 times.
+          for attempt in 1 2 3 4 5; do
+            if git -C "$pages_repo" push origin main; then
+              echo "Pushed Pages update on attempt ${attempt}."
+              exit 0
+            fi
+            echo "Push rejected (attempt ${attempt}/5). Rebasing on origin/main and retrying."
+            git -C "$pages_repo" pull --rebase origin main
+          done
+          echo "Push to Pages repository failed after 5 attempts."
+          exit 1

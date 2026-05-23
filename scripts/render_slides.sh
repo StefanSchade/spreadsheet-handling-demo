@@ -5,6 +5,13 @@
 #   scripts/render_slides.sh                          # render all walkthroughs
 #   scripts/render_slides.sh docs/walkthroughs/foo.adoc  # render one file
 #
+# Env:
+#   REVEALJS_DIR  Override the reveal.js asset base used by the rendered HTML.
+#                 Defaults to the jsDelivr CDN at reveal.js@4 for fast local
+#                 dev. The Pages publish workflow overrides this to the
+#                 pinned vendored bundle path (assets/reveal.js@<version>/)
+#                 so published slides do not depend on CDN availability.
+#
 # Output: build/slides/<name>.html
 # Generated HTML is gitignored; this directory maps to /latest/demo/slides/
 # in the Pages publishing layout.
@@ -13,7 +20,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 OUT_DIR="$ROOT/build/slides"
-REVEALJS_CDN="https://cdn.jsdelivr.net/npm/reveal.js@4"
+REVEALJS_DIR="${REVEALJS_DIR:-https://cdn.jsdelivr.net/npm/reveal.js@4}"
 
 # Locate asciidoctor-revealjs (user gem install lands in ~/.local/share/gem)
 if command -v asciidoctor-revealjs &>/dev/null; then
@@ -37,10 +44,11 @@ fi
 for src in "${FILES[@]}"; do
   echo "Rendering: $src"
   "$RENDER_CMD" \
-    -a revealjsdir="$REVEALJS_CDN" \
+    -a revealjsdir="$REVEALJS_DIR" \
     -D "$OUT_DIR" \
     "$src"
 done
 
 echo "Output: $OUT_DIR/"
 echo "(gitignored — maps to /latest/demo/slides/ in Pages layout)"
+echo "Reveal.js base: $REVEALJS_DIR"

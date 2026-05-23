@@ -63,3 +63,17 @@ journeys are indexed in `docs/index.adoc`.
 
 Smoke/integration checks run the curated journeys against the bound core
 checkout (use `make setup-lib-local` to bind the local library).
+
+## Published documentation
+
+Released versions of `spreadsheet-handling` publish their documentation to
+GitHub Pages:
+
+* Site root: <https://stefanschade.github.io/spreadsheet-handling-pages/>
+* Core user guide: `latest/core/user-guide/` under that site
+* Release notes: `latest/core/release-notes/`
+* Demo walkthroughs as Reveal.js slides: `latest/demo/slides/`
+  (or the per-version path `versions/<tag>/demo/slides/`)
+
+The PyPI project page links back to the same site, so installation from PyPI
+and reading the matching walkthroughs use the same documentation set.

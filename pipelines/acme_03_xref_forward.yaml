@@ -1,0 +1,17 @@
+io:
+  input:  { kind: json_dir, path: ./data/acme_03_xref }
+  output: { kind: xlsx,     path: ./tmp/acme_03_xref.xlsx }
+
+excel:
+  auto_filter: true
+  freeze_header: true
+  header_fill_rgb: DDDDDD
+
+pipeline:
+  - step: contract_xref
+    relation: product_market
+    output: product_market_matrix
+    row_keys: product_id
+    column_key: market_id
+    value: available
+    fill_value: ""

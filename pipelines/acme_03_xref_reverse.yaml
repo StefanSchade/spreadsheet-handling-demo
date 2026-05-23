@@ -1,0 +1,12 @@
+io:
+  input:  { kind: xlsx,     path: ./tmp/acme_03_xref.xlsx }
+  output: { kind: json_dir, path: ./tmp/acme_03_xref_roundtrip }
+
+pipeline:
+  - step: expand_xref
+    matrix: product_market_matrix
+    output: product_market
+    row_keys: product_id
+    column_key: market_id
+    value: available
+    drop_empty: true

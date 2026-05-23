@@ -35,6 +35,9 @@ demo repository.
 * Roundtrip editing walkthrough:
   xref:walkthroughs/product_roundtrip_editing_slice.adoc[Product Roundtrip Editing Slice]
 
+* ACME cross-tables walkthrough:
+  xref:walkthroughs/acme_03_xref_roundtrip.adoc[ACME Slice 3 — Cross-Tables Between Two Entities]
+
 * Command reference:
   xref:reference/commands.adoc[Commands]
 

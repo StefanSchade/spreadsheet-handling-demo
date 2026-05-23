@@ -1,0 +1,5 @@
+[
+  { "id": "P-100", "name": "Starter Kit" },
+  { "id": "P-200", "name": "Pro Suite" },
+  { "id": "P-300", "name": "Enterprise Bundle" }
+]

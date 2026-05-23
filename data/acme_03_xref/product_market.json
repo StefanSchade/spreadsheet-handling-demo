@@ -1,0 +1,9 @@
+[
+  { "product_id": "P-100", "market_id": "M-EU",   "available": "yes" },
+  { "product_id": "P-100", "market_id": "M-NA",   "available": "yes" },
+  { "product_id": "P-200", "market_id": "M-EU",   "available": "yes" },
+  { "product_id": "P-200", "market_id": "M-NA",   "available": "yes" },
+  { "product_id": "P-200", "market_id": "M-APAC", "available": "yes" },
+  { "product_id": "P-300", "market_id": "M-NA",   "available": "yes" },
+  { "product_id": "P-300", "market_id": "M-APAC", "available": "yes" }
+]

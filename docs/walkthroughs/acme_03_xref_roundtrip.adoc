@@ -1,0 +1,187 @@
+= ACME Demo — Slice 3: Cross-Tables Between Two Entities
+:backend: revealjs
+:revealjs_theme: white
+:revealjs_slideNumber: true
+:revealjs_transition: slide
+:source-highlighter: highlight.js
+
+== Goal
+
+Show how a many-to-many relationship between two entities (`products` and
+`markets`) projects into a human-editable cross-table in the workbook, and
+how user edits on that matrix recover canonical long-form data on re-import.
+
+This is the slice that demonstrates `contract_xref` and `expand_xref` —
+the bidirectional matrix transform.
+
+[NOTE]
+====
+Slice 2 (focused FK-helper enrichment) is currently covered by the older
+`product_business_slice` walkthrough rather than a dedicated acme_02 file.
+This slice (03) introduces the new transform pair on top of the structural
+baseline established by slice 1 (`acme_01_plain_roundtrip`).
+====
+
+== Source Data
+
+Three small JSON files under `data/acme_03_xref/`:
+
+`products.json` — the entity whose rows become the rows of the matrix:
+
+[source,json]
+----
+[
+  { "id": "P-100", "name": "Starter Kit" },
+  { "id": "P-200", "name": "Pro Suite" },
+  { "id": "P-300", "name": "Enterprise Bundle" }
+]
+----
+
+`markets.json` — the entity whose rows become the columns of the matrix:
+
+[source,json]
+----
+[
+  { "id": "M-EU",   "name": "Europe" },
+  { "id": "M-NA",   "name": "North America" },
+  { "id": "M-APAC", "name": "Asia Pacific" }
+]
+----
+
+`product_market.json` — the canonical long-form sparse relation
+(one row per available product/market pair):
+
+[source,json]
+----
+[
+  { "product_id": "P-100", "market_id": "M-EU", "available": "yes" },
+  { "product_id": "P-100", "market_id": "M-NA", "available": "yes" },
+  ...
+]
+----
+
+The "available" column carries the cell value. Absent (product, market) pairs
+mean "not available".
+
+== Forward Run
+
+[source,bash]
+----
+./run_demo.sh pipelines/acme_03_xref_forward.yaml
+----
+
+Or with `make`:
+
+[source,bash]
+----
+make run PIPELINE=pipelines/acme_03_xref_forward.yaml
+----
+
+Produces: `tmp/acme_03_xref.xlsx`
+
+== Forward Pipeline
+
+`pipelines/acme_03_xref_forward.yaml`
+
+[source,yaml]
+----
+pipeline:
+  - step: contract_xref
+    relation: product_market
+    output: product_market_matrix
+    row_keys: product_id
+    column_key: market_id
+    value: available
+    fill_value: ""
+----
+
+`contract_xref` reads the long-form `product_market` frame and pivots it into
+a matrix frame `product_market_matrix` where each row identifies a product
+and each column identifies a market. Cells hold the value of the `available`
+column from the corresponding source row; missing pairs get `fill_value`.
+
+== What You See In Excel
+
+The workbook contains:
+
+* `products` — the products entity, untouched.
+* `markets` — the markets entity, untouched.
+* `product_market` — the canonical long-form relation, as loaded.
+* `product_market_matrix` — the projected cross-table (the editing surface).
+* `_meta` — workbook configuration (do not edit).
+
+The matrix sheet looks like:
+
+[cols="1,1,1,1", options="header"]
+|===
+| product_id | M-EU | M-NA | M-APAC
+
+| P-100 | yes | yes |
+| P-200 | yes | yes | yes
+| P-300 |     | yes | yes
+|===
+
+You can read availability at a glance and edit a single cell to toggle a
+product/market pair. The long-form `product_market` sheet is kept as a
+reference view; the matrix is the authoritative editing surface and the
+reverse pipeline rebuilds the long-form from the matrix.
+
+== Edit Something
+
+Toggle one cell — for example, mark `P-300 / M-EU` as `yes`, or clear
+`P-200 / M-APAC`. Save the workbook.
+
+== Reverse Run
+
+[source,bash]
+----
+./run_demo.sh pipelines/acme_03_xref_reverse.yaml
+----
+
+Writes JSON files to `tmp/acme_03_xref_roundtrip/`.
+
+== Reverse Pipeline
+
+`pipelines/acme_03_xref_reverse.yaml`
+
+[source,yaml]
+----
+pipeline:
+  - step: expand_xref
+    matrix: product_market_matrix
+    output: product_market
+    row_keys: product_id
+    column_key: market_id
+    value: available
+    drop_empty: true
+----
+
+`expand_xref` reads the matrix and emits one row per non-empty cell into the
+recovered `product_market` frame. With `drop_empty: true` cleared cells
+disappear; with `drop_empty: false` they would land as rows with empty
+`available` values.
+
+== Inspect Returned JSON
+
+`tmp/acme_03_xref_roundtrip/product_market.json` contains the long-form
+relation reconstructed from your edited matrix. Rows you added appear; rows
+you cleared are gone. `products.json` and `markets.json` are unchanged in
+content.
+
+The roundtrip is *conditionally bijective* (see the transformation catalog,
+`expand_xref` / `contract_xref` entry):
+
+* `contract_xref` is lossless when each (`product_id`, `market_id`) pair
+  appears at most once in the long-form input. The seed data satisfies this.
+* `expand_xref` with `drop_empty: true` is lossless against the matrix
+  whenever the long-form data has no empty `available` values worth
+  preserving.
+
+== Why This Slice Matters
+
+A many-to-many relationship like product/market availability is awkward to
+edit in long-form (you scan a list of pairs). It is natural to edit as a
+matrix (one cell per pair, presence implies "yes"). `contract_xref` and
+`expand_xref` let you pick the representation that fits the task — read and
+edit in matrix form, persist in canonical long-form — without writing custom
+code per relation.

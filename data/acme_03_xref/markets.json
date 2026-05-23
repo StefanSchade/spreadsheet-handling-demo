@@ -1,0 +1,5 @@
+[
+  { "id": "M-EU",   "name": "Europe" },
+  { "id": "M-NA",   "name": "North America" },
+  { "id": "M-APAC", "name": "Asia Pacific" }
+]
