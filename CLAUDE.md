@@ -24,6 +24,12 @@ If the core repository is not present on disk, work from the fallback rules
 below for demo-local edits only; do not invent parallel architecture or
 policy here.
 
+Review discipline: if a task is a review or produces findings / validation
+work, create or update the matching `*_review.adoc` artifact in the repo's
+review location, commit that review artifact separately from any follow-up
+fix, summarize the validation commands you ran, and record the disposition
+plus any residual risks.
+
 ## What this repo owns
 
 * demo pipelines, sample data, walkthrough source (AsciiDoc), launchers,

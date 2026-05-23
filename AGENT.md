@@ -29,6 +29,12 @@ If a task appears to require core architecture work, stop here and continue
 in the core repository, leaving only the demo-facing integration slice in
 this one.
 
+Review discipline: if a task is a review or produces findings / validation
+work, create or update the matching `*_review.adoc` artifact in the repo's
+review location, commit that review artifact separately from any follow-up
+fix, summarize the validation commands you ran, and record the disposition
+plus any residual risks.
+
 ## Minimal operating rules for this demo repository
 
 * Optimize for demo usefulness: pipelines, walkthroughs, reference
