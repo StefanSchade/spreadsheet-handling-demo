@@ -32,15 +32,4 @@ jobs:
           .venv/bin/python -m pip show spreadsheet-handling
           test -x .venv/bin/sheets-run
           .venv/bin/sheets-run --help >/dev/null
-
-      - name: Extract
-        run: |
-          make extract
-
-      - name: Upload target artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: nxt-config-${{ github.sha }}
-          path: target/
-          retention-days: 14
+          
