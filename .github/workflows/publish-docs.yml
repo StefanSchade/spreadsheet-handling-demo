@@ -4,9 +4,19 @@ on:
   push:
     tags: [ 'v*' ]
 
+# Most-restrictive default for GITHUB_TOKEN. The `publish-docs` job
+# already declares its own minimal block (still `contents: read`; the
+# Pages push uses a separate SSH deploy key, not GITHUB_TOKEN). This
+# top-level default makes the `test` job's permission scope explicit.
+# Per FTR-GITHUB-ACTIONS-MAINTENANCE-P5.
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
         with:

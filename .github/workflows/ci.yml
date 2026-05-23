@@ -27,9 +27,17 @@ on:
   push:
   pull_request:
 
+# Most-restrictive default for GITHUB_TOKEN. This workflow only reads the
+# source tree and runs pytest/CLI smoke; it never writes to the repo,
+# publishes packages, or pushes to Pages. Per FTR-GITHUB-ACTIONS-MAINTENANCE-P5.
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
