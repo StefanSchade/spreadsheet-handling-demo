@@ -18,10 +18,10 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0          # ensure tags are present
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
       - name: Create venv & install (pyproject)
@@ -53,7 +53,7 @@ jobs:
       REVEALJS_VERSION: '4.6.1'
       REVEALJS_DIR: '/spreadsheet-handling-pages/assets/reveal.js@4.6.1'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0          # tags present for PEP 440 latest-tag guard
       - name: Install slide rendering stack
