@@ -4,7 +4,7 @@
 
 CONFIG := sheets.yaml
 LIB_SRC ?= ../core
-LIB_PYPI_VERSION ?= 0.1.0b5
+LIB_PYPI_VERSION ?= 0.1.0b6
 
 # =========================
 # Virtualenv / Python

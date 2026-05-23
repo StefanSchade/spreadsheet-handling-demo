@@ -12,7 +12,7 @@ requires-python = ">=3.10"
 
 # Important: keep this in sync with `LIB_PYPI_VERSION` in the Makefile.
 dependencies = [
-    "spreadsheet-handling==0.1.0b5",
+    "spreadsheet-handling==0.1.0b6",
 ]
 
 [project.optional-dependencies]
