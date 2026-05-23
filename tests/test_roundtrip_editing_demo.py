@@ -62,3 +62,7 @@ def test_product_roundtrip_editing_preserves_user_changes(tmp_path, monkeypatch)
 
     assert products[0]["status"] == "pilot"
     assert branches[0]["region"] == "EMEA"
+    assert "_product_manager_name" not in products[0]
+    assert "_branch_name" not in json.loads(
+        (reimport_dir / "product_manager.json").read_text(encoding="utf-8")
+    )[0]

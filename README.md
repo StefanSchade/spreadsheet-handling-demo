@@ -85,14 +85,16 @@ Output: `./tmp/product_business_slice_reimported/*.json`.
 Compare the reimported JSON against the original source data:
 
 ```bash
-diff -ru ./data/product_business_slice ./tmp/product_business_slice_reimported \
+diff -ru --exclude=overrides.yaml --exclude=_meta.yaml \
+  ./data/product_business_slice ./tmp/product_business_slice_reimported \
   | head -40
 ```
 
-You should see exactly the field you edited in step 6 &mdash; nothing
-else. The helper column does not leak into the canonical JSON, sheet
-ordering is preserved, and the FK identifiers are untouched. That
-edit-safe round-trip is the property the slice is built to demonstrate.
+You should see exactly the field you edited in step 6. The excluded files
+are workbook rendering/configuration sidecars, not business payload. The
+helper column does not leak into the canonical JSON, sheet ordering is
+preserved, and the FK identifiers are untouched. That edit-safe
+round-trip is the property the slice is built to demonstrate.
 
 ## Where to go next
 

@@ -2,4 +2,6 @@ io:
   input:  { kind: xlsx,     path: ./tmp/product_business_slice.xlsx }
   output: { kind: json_dir, path: ./tmp/product_business_slice_reimported }
 
-pipeline: []
+pipeline:
+  - step: remove_fk_helpers
+    prefix: "_"
