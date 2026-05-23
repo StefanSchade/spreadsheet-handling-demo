@@ -1,45 +1,76 @@
 # spreadsheet-handling-demo
 
-Consumer demo repo for `spreadsheet-handling`.
+Consumer demo repository for `spreadsheet-handling`. The maintained demo
+path is the **product business slice**: it shows the core idea in one
+small flow &mdash; a normalized JSON model becomes a business-readable
+workbook, you edit a cell, and the workbook reimports without losing
+identity.
 
-## Current stance
+For the current beta cycle this demo stays intentionally `xlsx`-first.
+ODS is covered in the core repository but is not yet externalized
+through the demo's maintained run path.
 
-The maintained demo path goes through `sheets-run` plus checked-in YAML
-config/pipeline files.
+## First-hour tutorial: the product business slice
 
-For the upcoming beta cycle this demo stays intentionally `xlsx`-first. ODS is
-covered in the core repository, but is not yet externalized through the demo's
-maintained run path.
+Eight concrete steps. You should finish them in well under an hour;
+budget the time for *reading* the generated workbook, not for setup.
 
-## Local setup
+### 1. Clone the demo
+
+```bash
+git clone https://github.com/StefanSchade/spreadsheet-handling-demo.git
+cd spreadsheet-handling-demo
+```
+
+### 2. Set up the local environment
 
 ```bash
 make setup
-make setup-lib-local
+make setup-lib-local      # bind the local core checkout (sibling on disk)
 ```
 
-## Curated journey: Product Business Slice
+If you do not have a local core checkout, replace the second command with
+`make setup-lib-pypi` to install the pinned PyPI release instead.
 
-This is the primary maintained journey. It shows the core idea in one small
-flow: a normalized JSON model becomes a business-readable workbook and survives
-an edit-and-reimport roundtrip without losing identity.
-
-**1. Generate the workbook**
+### 3. Run the product business slice forward pipeline
 
 ```bash
 make run PIPELINE=./pipelines/demo_product_business_slice.yaml
 ```
 
-* Output: `./tmp/product_business_slice.xlsx`
-* Observe: FK helper columns (e.g. `_product_manager_name`) next to their FK
-  column, list validations on `status` / `category` / `country`, and per-sheet
-  header styling.
-* Idea: normalized FK relations + helper enrichment produce a readable
-  workbook without denormalizing the source data.
+Output: `./tmp/product_business_slice.xlsx`.
 
-**2. Edit, then reimport**
+### 4. Open the generated workbook
 
-Change a cell in the workbook (e.g. a `status`), then read it back:
+Open `./tmp/product_business_slice.xlsx` in Excel or LibreOffice Calc.
+The workbook has three sheets: `product`, `product_manager`, and `branch`.
+
+### 5. Inspect helper columns, validations, and styling
+
+Look at the `product` sheet and notice:
+
+- a derived helper column (e.g. `_product_manager_name`) sitting next to
+  the foreign-key column &mdash; this is added by the
+  `add_fk_helpers` pipeline step from the related `product_manager` table;
+- list validations on `status` (`active` / `pilot` / `retired`),
+  `category` (`entry` / `standard` / `premium`), and `country`
+  (`DE` / `CH` / `AT`) &mdash; try entering an out-of-list value, the cell
+  rejects it;
+- per-sheet header fills (`product` green, `product_manager` blue,
+  `branch` orange) and the `branch` sheet keeping its header unfrozen
+  while the other two freeze theirs &mdash; per-sheet overrides come from
+  `data/product_business_slice/overrides.yaml`.
+
+The idea here: normalized FK relations plus helper enrichment produce a
+readable workbook without denormalizing the source data.
+
+### 6. Edit a single business value
+
+In the workbook, change one cell &mdash; for example switch a product's
+`status` from `active` to `pilot`, or rename a `product_manager` &mdash;
+and save the file. Leave the helper column alone; it is derived.
+
+### 7. Re-import the workbook
 
 ```bash
 make run PIPELINE=./pipelines/demo_workbook_reimport.yaml \
@@ -47,13 +78,38 @@ make run PIPELINE=./pipelines/demo_workbook_reimport.yaml \
   OUT_PATH=./tmp/product_business_slice_reimported
 ```
 
-* Output: `./tmp/product_business_slice_reimported/*.json`
-* Observe: your edited value is preserved; derived helper columns do not
-  corrupt the canonical JSON.
-* Idea: the JSON ↔ XLSX roundtrip is deterministic and edit-safe.
+Output: `./tmp/product_business_slice_reimported/*.json`.
 
-Full narrative: `docs/walkthroughs/product_business_slice.adoc`. More curated
-journeys are indexed in `docs/index.adoc`.
+### 8. Verify the canonical JSON remains clean
+
+Compare the reimported JSON against the original source data:
+
+```bash
+diff -ru ./data/product_business_slice ./tmp/product_business_slice_reimported \
+  | head -40
+```
+
+You should see exactly the field you edited in step 6 &mdash; nothing
+else. The helper column does not leak into the canonical JSON, sheet
+ordering is preserved, and the FK identifiers are untouched. That
+edit-safe round-trip is the property the slice is built to demonstrate.
+
+## Where to go next
+
+- **View this slice as a short visual walkthrough** &mdash;
+  <https://stefanschade.github.io/spreadsheet-handling-pages/latest/demo/slides/product_business_slice.html>
+  is the Reveal.js deck for the same flow you just ran.
+- **Read the user guide (latest release)** &mdash;
+  <https://stefanschade.github.io/spreadsheet-handling-pages/latest/core/user-guide/>.
+- **Browse documentation by version** &mdash;
+  <https://stefanschade.github.io/spreadsheet-handling-pages/>
+  is the per-release archive portal; it carries the latest-release
+  banner and a list of every published version.
+
+The full narrative for this slice is at
+`docs/walkthroughs/product_business_slice.adoc`. More curated journeys
+are indexed in `docs/index.adoc`; they are not part of the maintained
+first-hour tutorial path.
 
 ## Verify
 
@@ -63,17 +119,3 @@ journeys are indexed in `docs/index.adoc`.
 
 Smoke/integration checks run the curated journeys against the bound core
 checkout (use `make setup-lib-local` to bind the local library).
-
-## Published documentation
-
-Released versions of `spreadsheet-handling` publish their documentation to
-GitHub Pages:
-
-* Site root: <https://stefanschade.github.io/spreadsheet-handling-pages/>
-* Core user guide: `latest/core/user-guide/` under that site
-* Release notes: `latest/core/release-notes/`
-* Demo walkthroughs as Reveal.js slides: `latest/demo/slides/`
-  (or the per-version path `versions/<tag>/demo/slides/`)
-
-The PyPI project page links back to the same site, so installation from PyPI
-and reading the matching walkthroughs use the same documentation set.
