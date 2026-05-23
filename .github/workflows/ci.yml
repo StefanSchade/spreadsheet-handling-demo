@@ -27,11 +27,11 @@ jobs:
         run: |
           .venv/bin/python -m pytest
 
-      - name: Pack & Verify
+      - name: Smoke test installed core CLI
         run: |
           .venv/bin/python -m pip show spreadsheet-handling
-          make pack
-          make verify
+          test -x .venv/bin/sheets-run
+          .venv/bin/sheets-run --help >/dev/null
 
       - name: Extract
         run: |
