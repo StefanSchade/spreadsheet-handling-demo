@@ -22,11 +22,11 @@ multi-header, named-ranges) are not in scope.
 docs/screenshots/
   README.md                                   <- this file
   product_business_slice/
-    workbook-overview.png                     <- planned
-    helper-columns.png                        <- planned
-    list-validations-status.png               <- planned
-    edit-status-before.png                    <- planned
-    edit-status-after.png                     <- planned
+    workbook-overview.png                     <- captured
+    helper-columns.png                        <- captured
+    list-validations-status.png               <- captured
+    list-validations-category.png             <- captured
+    edit-status-after.png                     <- captured
 ```
 
 Naming convention: kebab-case, descriptive, no version suffix in the
@@ -37,20 +37,39 @@ log* section below.
 
 | Image | Status |
 |---|---|
-| `product_business_slice/workbook-overview.png` | pending capture |
-| `product_business_slice/helper-columns.png` | pending capture |
-| `product_business_slice/list-validations-status.png` | pending capture |
-| `product_business_slice/edit-status-before.png` | pending capture |
-| `product_business_slice/edit-status-after.png` | pending capture |
+| `product_business_slice/workbook-overview.png` | captured (198 KiB, 1274&times;924, RGBA) |
+| `product_business_slice/helper-columns.png` | captured (25 KiB, 502&times;148, RGBA) |
+| `product_business_slice/list-validations-status.png` | captured (17 KiB, 251&times;178, RGBA) |
+| `product_business_slice/list-validations-category.png` | captured (17 KiB, 310&times;171, RGBA) |
+| `product_business_slice/edit-status-after.png` | captured (33 KiB, 536&times;197, RGBA) |
 
-This first slice landed the directory layout, the per-image content
-specification below, and the maintainer refresh procedure. The actual
-PNG capture is a maintainer step (the controlling FTR rejects automated
-/ headless capture for the beta line). Until the images exist, the demo
-`README.md` deliberately does not reference them; it stays text-only and
-points users to the Reveal.js deck for live visual material. Adding
-inline image references is a one-line follow-up once a captured set
-lands.
+The captured set covers the four content categories the controlling FTR
+calls out (overview, helper columns, list validations, edit). The
+list-validations bucket is covered by two images (status and category)
+instead of one because each cell only opens its own dropdown, and both
+rules are part of the journey the demo `README.md` step 5 asks the
+reader to inspect.
+
+The original capture plan also listed `edit-status-before.png`. That
+image was not captured: the workbook-overview and helper-columns frames
+already show the unedited state of the `status` column, so a dedicated
+"before" frame would duplicate signal. The single `edit-status-after.png`
+is sufficient to support the README's step-6 (edit) / step-8 (verify)
+narrative; removing the paired frame keeps image density honest.
+
+Image references in the walkthrough source
+`docs/walkthroughs/product_business_slice.adoc` are wrapped in
+`ifndef::backend-revealjs[]` blocks so they appear in the AsciiDoc
+HTML render (and on GitHub's web view of the .adoc file) but not in
+the published Reveal.js deck. The demo publish-docs workflow rsyncs
+only `build/slides/` into `versions/<tag>/demo/slides/` and
+`latest/demo/slides/`; it does not copy `docs/screenshots/` into the
+Pages layout. Embedding raw `image::` directives in the slide source
+would therefore produce broken-image icons in the published deck.
+Bundling images into the deck publish is the deferred follow-up named
+in *Reference / publishing policy* below; the demo `README.md` itself
+stays text-only and points readers at the walkthrough document for
+the image-rich version.
 
 ## Per-image content specification
 
@@ -87,32 +106,34 @@ Goal: show that the helper column sits next to its FK column on the
   that the helper value (`Marta Vogel`, etc.) tracks the FK value
   (`PM-10`, etc.). Do not crop out the helper column header.
 
-### `list-validations-status.png`
+### `list-validations-status.png` and `list-validations-category.png`
 
-Goal: show the Excel/Calc list-validation dropdown on a `status`
-cell.
+Goal: show the Excel/Calc list-validation dropdowns on the two
+validated `product` columns.
 
 * Sheet: `product`.
-* Click a `status` cell to open the in-cell dropdown.
-* Capture frame: the dropdown showing `active` / `pilot` / `retired`
-  with the cell address visible.
+* Click a `status` cell to open its in-cell dropdown; capture the
+  dropdown showing `active` / `pilot` / `retired`. Then repeat on a
+  `category` cell to capture `entry` / `standard` / `premium`.
+* Capture frame: the dropdown plus enough surrounding cells that the
+  reader can see which column is opening.
 * Alternative if the dropdown UI is awkward to capture: a screenshot
   of the data-validation dialog (Data &rarr; Validation) for the
-  `status` column showing the allowed list.
+  same column showing the allowed list.
 
-### `edit-status-before.png` and `edit-status-after.png`
+### `edit-status-after.png`
 
-Goal: a paired before/after of a single business edit, to support the
-README's step-6 (edit) / step-8 (verify) narrative.
+Goal: support the README's step-6 (edit) / step-8 (verify) narrative
+with a single after-edit frame.
 
-* Pick one row on `product` (the same row in both frames).
-* `edit-status-before.png` &mdash; row before the edit; `status` shows
-  its original value (e.g. `active`).
-* `edit-status-after.png` &mdash; same row after the edit and save;
-  `status` shows the new value (e.g. `pilot`).
-* The two frames should be identical except for the edited cell;
-  do not also rearrange columns, change zoom, or change the active
-  sheet between frames.
+* Sheet: `product`. Pick a row whose original `status` is visible in
+  `workbook-overview.png` or `helper-columns.png`.
+* Capture the row after the edit and save; the `status` cell shows
+  the new value (for example `pilot` where the source data had
+  `active`).
+* A paired "before" frame is intentionally not captured because the
+  pre-edit state is already visible in the overview / helper-column
+  captures. Adding it would duplicate signal.
 
 ## Size and format
 
@@ -158,6 +179,11 @@ core version changes meaningfully:
 * These screenshots are local to the demo repository. They are not
   currently copied into the Pages publish output; a later FTR will
   decide the publishing model.
+* The walkthrough source at
+  `docs/walkthroughs/product_business_slice.adoc` embeds them via
+  `ifndef::backend-revealjs[]` so they render in the AsciiDoc HTML
+  output and on the demo repository's GitHub web view of the .adoc
+  file but do not appear in the published Reveal.js deck.
 * Any future publishing of these images must honour the same
   frozen-context-versioned policy that
   `FTR-RELEASE-README-VERSION-BAKING-P5` (DRAFT, in core backlog) is
@@ -165,13 +191,13 @@ core version changes meaningfully:
   must either live under `versions/<tag>/...` or carry a clear
   "latest / current release" label, so users on an older release do
   not see freshly-captured imagery without a version cue.
-* References from the demo `README.md` are an explicit follow-up
-  step once a captured set lands; the FTR allows both
-  "reference inline now" and "hold references for the publishing
-  slice" as acceptable models.
+* The demo `README.md` itself stays text-only and points readers at
+  the walkthrough document for the image-rich version; deliberately
+  keeping it text-only avoids turning the entry README into an
+  image-heavy page.
 
 ## Capture log
 
-| Date       | Release tag captured against | Notes                          |
-|------------|------------------------------|--------------------------------|
-| (pending)  | (pending)                    | Initial capture not yet landed |
+| Date       | Release tag captured against | Notes                                                                                                              |
+|------------|------------------------------|--------------------------------------------------------------------------------------------------------------------|
+| 2026-05-24 | `v0.1.0b6`                   | Initial capture. Manual screenshots from LibreOffice Calc on Linux against the currently-pinned core release.       |

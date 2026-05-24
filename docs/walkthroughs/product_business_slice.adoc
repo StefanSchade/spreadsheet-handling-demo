@@ -159,11 +159,30 @@ pipeline:
 
 == What To Look For In Excel
 
+The generated workbook has three sheets with distinct per-sheet
+styling. Image references in this section render in the AsciiDoc HTML
+output and on the demo repository's GitHub view; the published
+Reveal.js deck currently omits them (see screenshot publishing
+policy in `docs/screenshots/README.md`).
+
+ifndef::backend-revealjs[]
+image::../screenshots/product_business_slice/workbook-overview.png[Generated product business slice workbook with product / product_manager / branch sheets in LibreOffice Calc]
+endif::[]
+
 On `product`:
 
-* helper column `_product_manager_name` next to `id_(product_manager)`
+* helper column `_product_manager_name` next to `id_(product_manager)`:
++
+ifndef::backend-revealjs[]
+image::../screenshots/product_business_slice/helper-columns.png[Product sheet showing _product_manager_name helper column next to id_(product_manager)]
+endif::[]
 * list validations on `status` (`active` / `pilot` / `retired`) and on
-  `category` (`entry` / `standard` / `premium`)
+  `category` (`entry` / `standard` / `premium`):
++
+ifndef::backend-revealjs[]
+image::../screenshots/product_business_slice/list-validations-status.png[Status cell dropdown showing active / pilot / retired]
+image::../screenshots/product_business_slice/list-validations-category.png[Category cell dropdown showing entry / standard / premium]
+endif::[]
 * filter enabled
 * freeze enabled
 
@@ -204,6 +223,10 @@ That means:
 This is the property the eight-step first-hour tutorial in the demo
 `README.md` asks you to verify in its final step (`diff` of the source
 and reimported JSON should show only the field you edited).
+
+ifndef::backend-revealjs[]
+image::../screenshots/product_business_slice/edit-status-after.png["Product sheet after editing one status cell, before reimport"]
+endif::[]
 
 == Why This Is A Good First Slice
 
