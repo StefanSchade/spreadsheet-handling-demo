@@ -82,8 +82,8 @@ produce.
 
 ### `workbook-overview.png`
 
-Goal: show the three sheets and their distinct per-sheet styling at a
-glance.
+Goal: show the three visible business sheets and their distinct
+per-sheet styling at a glance.
 
 * Open `tmp/product_business_slice.xlsx` after a clean run of
   `make run PIPELINE=./pipelines/demo_product_business_slice.yaml`.

@@ -43,7 +43,8 @@ Output: `./tmp/product_business_slice.xlsx`.
 ### 4. Open the generated workbook
 
 Open `./tmp/product_business_slice.xlsx` in Excel or LibreOffice Calc.
-The workbook has three sheets: `product`, `product_manager`, and `branch`.
+The workbook has three visible business sheets: `product`,
+`product_manager`, and `branch`.
 
 ### 5. Inspect helper columns, validations, and styling
 

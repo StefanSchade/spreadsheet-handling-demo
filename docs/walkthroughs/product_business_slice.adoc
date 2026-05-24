@@ -159,14 +159,14 @@ pipeline:
 
 == What To Look For In Excel
 
-The generated workbook has three sheets with distinct per-sheet
-styling. Image references in this section render in the AsciiDoc HTML
-output and on the demo repository's GitHub view; the published
-Reveal.js deck currently omits them (see screenshot publishing
-policy in `docs/screenshots/README.md`).
+The generated workbook has three visible business sheets with distinct
+per-sheet styling. Image references in this section render in the
+AsciiDoc HTML output and on the demo repository's GitHub view; the
+published Reveal.js deck currently omits them (see screenshot
+publishing policy in `docs/screenshots/README.md`).
 
 ifndef::backend-revealjs[]
-image::../screenshots/product_business_slice/workbook-overview.png[Generated product business slice workbook with product / product_manager / branch sheets in LibreOffice Calc]
+image::../screenshots/product_business_slice/workbook-overview.png[Generated product business slice workbook with visible product / product_manager / branch sheets in LibreOffice Calc]
 endif::[]
 
 On `product`:
