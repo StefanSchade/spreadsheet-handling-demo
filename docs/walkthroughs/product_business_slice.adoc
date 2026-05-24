@@ -161,30 +161,49 @@ pipeline:
 
 On `product`:
 
-* helper column for `product_manager`
-* list validations on `status` and `category`
+* helper column `_product_manager_name` next to `id_(product_manager)`
+* list validations on `status` (`active` / `pilot` / `retired`) and on
+  `category` (`entry` / `standard` / `premium`)
 * filter enabled
 * freeze enabled
 
 On `branch`:
 
-* list validation on `country`
+* list validation on `country` (`DE` / `CH` / `AT`)
 * filter disabled
 * freeze disabled
 * distinct header styling via sheet override
 
 == What Comes Back On Re-import
 
-After the workbook is read back again, the helper columns stay understandable
-because the pipeline flattens headers before export.
+The reimport pipeline (`pipelines/demo_workbook_reimport.yaml`) reads the
+edited workbook and writes canonical JSON. It runs `remove_fk_helpers`
+with `prefix: "_"` so derived helper columns are stripped before the
+JSON is written:
 
-Examples:
+[source,yaml]
+----
+pipeline:
+  - step: remove_fk_helpers
+    prefix: "_"
+----
 
-* `product` gets `_product_manager_name`
-* `product_manager` gets `_branch_name`
+That means:
 
-This keeps the roundtrip suitable for explanation and testing, instead of returning
-tuple-shaped serialized header names.
+* business edits in non-helper cells survive the round-trip; for example
+  changing a `status` from `active` to `pilot` shows up in the reimported
+  `product.json` exactly as edited;
+* helper columns (`_product_manager_name`, `_branch_name`, ...) do not
+  leak into the canonical JSON, even though they were visible in the
+  workbook;
+* `data/product_business_slice/overrides.yaml` and any sidecar
+  `_meta.yaml` are workbook-rendering configuration, not business
+  payload, and are correctly absent from the reimported `json_dir`
+  output.
+
+This is the property the eight-step first-hour tutorial in the demo
+`README.md` asks you to verify in its final step (`diff` of the source
+and reimported JSON should show only the field you edited).
 
 == Why This Is A Good First Slice
 
@@ -202,5 +221,8 @@ or multi-header examples.
 
 == Current Notes
 
-For this slice we flatten headers before writing so that helper columns come
-back from re-import as readable JSON keys such as `_product_manager_name`.
+Helper columns are visible inside the workbook (the forward pipeline runs
+`add_fk_helpers` + `reorder_fk_helpers`) but are stripped on the way back
+to JSON (the reimport pipeline runs `remove_fk_helpers`). That asymmetry
+is intentional: helpers exist to make the workbook readable for humans,
+not to alter the canonical JSON model.
