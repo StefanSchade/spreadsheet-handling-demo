@@ -51,8 +51,11 @@ The workbook has three visible business sheets: `product`,
 Look at the `product` sheet and notice:
 
 - a derived helper column (e.g. `_product_manager_name`) sitting next to
-  the foreign-key column &mdash; this is added by the
-  `add_fk_helpers` pipeline step from the related `product_manager` table;
+  the foreign-key column &mdash; the pipeline first runs
+  `infer_fk_relations` to record the FK relation (source frame, FK column,
+  target frame, target key) under `_meta.helper_policies.fk`, and then
+  `add_fk_helpers` materializes the helper columns from that policy and
+  records derived helper provenance for the reimport pass;
 - list validations on `status` (`active` / `pilot` / `retired`),
   `category` (`entry` / `standard` / `premium`), and `country`
   (`DE` / `CH` / `AT`) &mdash; try entering an out-of-list value, the cell

@@ -112,14 +112,24 @@ This gives us one workbook with visible differences between sheets instead of a 
 
 == Pipeline
 
-The pipeline combines five ideas in one small flow:
+The pipeline combines six ideas in one small flow:
 
 * `apply_overrides` injects workbook and sheet rendering options
 * `validate` checks duplicate IDs and missing FK targets
 * `add_validations` adds Excel list validations
-* `add_fk_helpers` materializes helper columns (and `reorder_fk_helpers`
-  places them next to their FK column)
+* `infer_fk_relations` writes the v2 FK relation policy under
+  `_meta.helper_policies.fk` from the `id_(<target>)` cell convention --
+  this is the configuration step the FK-helper primitives consume
+* `add_fk_helpers` materializes helper columns from that policy (and
+  `reorder_fk_helpers` places them next to their FK column)
 * `flatten_headers` keeps re-imported JSON readable on the way back
+
+`add_fk_helpers`, `reorder_fk_helpers`, `validate_fk_helpers`, and
+`remove_fk_helpers` are policy *consumers*: they read the v2 relation
+policy and the derived helper provenance written by `add_fk_helpers`.
+A pipeline that uses any of them must therefore run a policy *producer*
+first -- either `infer_fk_relations` (heuristic, as in this slice) or
+`configure_fk_helpers` (explicit / manual policy).
 
 The relevant shape is:
 
@@ -146,12 +156,14 @@ pipeline:
           type: in_list
           values: [active, pilot, retired]
 
+  - step: infer_fk_relations
+    mode: naming_convention
+    id_columns: [id]
+    fk_patterns:
+      - "id_({target})"
+    target_label_fields: [name]
+
   - step: add_fk_helpers
-    defaults:
-      id_field: id
-      label_field: name
-      detect_fk: true
-      helper_prefix: "_"
 
   - step: reorder_fk_helpers
     helper_prefix: "_"
@@ -197,8 +209,7 @@ On `branch`:
 
 The reimport pipeline (`pipelines/demo_workbook_reimport.yaml`) reads the
 edited workbook and writes canonical JSON. It runs `remove_fk_helpers`
-with `prefix: "_"` so derived helper columns are stripped before the
-JSON is written:
+so derived helper columns are stripped before the JSON is written:
 
 [source,yaml]
 ----
@@ -206,6 +217,14 @@ pipeline:
   - step: remove_fk_helpers
     prefix: "_"
 ----
+
+`remove_fk_helpers` reads the derived helper provenance that
+`add_fk_helpers` wrote into the workbook on the forward pass (the
+provenance survives the XLSX roundtrip via persisted `_meta`). It then
+drops exactly the columns recorded in that provenance -- no
+classification by column-name prefix. The `prefix` parameter is kept
+for backwards compatibility but is not the discovery mechanism;
+provenance is.
 
 That means:
 
