@@ -45,5 +45,7 @@ make run PIPELINE=./pipelines/demo_storyforge_characters.yaml
   appears next to `id_(species)` (e.g. `S-emberfox` -> `Emberfox`).
 * Idea: normalized story-world data becomes an author-readable workbook using
   exactly the same canonical steps as the product journey
-  (`validate`, `add_fk_helpers`, `reorder_fk_helpers`, `flatten_headers`) --
-  storytelling concepts stay out of the core library.
+  (`validate`, `infer_fk_relations`, `add_fk_helpers`,
+  `reorder_fk_helpers`, `flatten_headers`). `infer_fk_relations` records
+  the FK relation policy that the helper primitives consume; storytelling
+  concepts stay out of the core library.
